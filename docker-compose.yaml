@@ -6,4 +6,41 @@ services:
       - 'POSTGRES_PASSWORD=secret'
       - 'POSTGRES_USER=myuser'
     ports:
-      - "5432:5432"
+      - 5432:5432
+    networks:
+      - pokedex-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U myuser" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+
+  spring-boot-app:
+    build:
+      context: ./spring/
+    ports:
+      - 8080:8080
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/pokedex
+      SPRING_DATASOURCE_USERNAME: myuser
+      SPRING_DATASOURCE_PASSWORD: secret
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      - postgres
+    networks:
+      - pokedex-network
+
+  react-app:
+    build:
+      context: ./react/
+    ports:
+      - 3000:80
+    networks:
+      - pokedex-network
+    depends_on:
+      - spring-boot-app
+
+networks:
+  pokedex-network:
+    driver: bridge
