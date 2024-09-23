@@ -27,18 +27,18 @@ data class BaseDto(
 
 data class EvolutionsDto(
     var prev: EvolutionDto?,
-    var next: List<EvolutionDto>?
+    var next: List<EvolutionDto>
 )
 
 data class EvolutionDto(
-    val id: Long,
+    val id: Long?,
     val condition: String
 )
 
 data class ProfileDto(
     val height: String,
     val weight: String,
-    val ability: List<AbilityDto>
+    val abilities: List<AbilityDto>
 )
 
 data class AbilityDto(

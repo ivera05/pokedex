@@ -14,20 +14,20 @@ import com.vladmihalcea.hibernate.type.json.JsonType
 class PokemonTypeEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null,
+    var id: Long = 0L,
 
     @Column(name = "name", unique = true, nullable = false)
-    var type: String? = null,
+    var type: String = "",
 
     @Type(JsonType::class)
     @Column(name = "effective", columnDefinition = "jsonb")
-    var effective: List<String> = listOf<String>(),
+    var effective: List<String> = emptyList(),
 
     @Type(JsonType::class)
     @Column(name = "ineffective", columnDefinition = "jsonb")
-    var ineffective: List<String> = listOf<String>(),
+    var ineffective: List<String> = emptyList(),
 
     @Type(JsonType::class)
     @Column(name = "no_effect", columnDefinition = "jsonb")
-    var noEffect: List<String> = listOf<String>(),
+    var noEffect: List<String> = emptyList(),
 )

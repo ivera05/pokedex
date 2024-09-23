@@ -1,5 +1,5 @@
 services:
-  postgres:
+  pokedex-db:
     image: 'postgres:latest'
     environment:
       - 'POSTGRES_DB=pokedex'
@@ -9,6 +9,8 @@ services:
       - 5432:5432
     networks:
       - pokedex-network
+    volumes:
+      - pokedex-db-data:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U myuser" ]
       interval: 10s
@@ -16,31 +18,42 @@ services:
       retries: 5
     restart: always
 
-  spring-boot-app:
+  pokedex-spring:
     build:
       context: ./spring/
     ports:
       - 8080:8080
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/pokedex
+      SPRING_DATASOURCE_URL: jdbc:postgresql://pokedex-db:5432/pokedex
       SPRING_DATASOURCE_USERNAME: myuser
       SPRING_DATASOURCE_PASSWORD: secret
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
     depends_on:
-      - postgres
+      pokedex-db:
+        condition: service_healthy
     networks:
       - pokedex-network
 
-  react-app:
+  pokedex-nextjs:
     build:
-      context: ./react/
+      context: ./nextjs-dashboard/
     ports:
-      - 3000:80
+      - 3000:3000
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./nextjs-dashboard:/app
+      - /nextjs-dashboard/node_modules
+    stdin_open: true
+    tty: true
     networks:
       - pokedex-network
     depends_on:
-      - spring-boot-app
+      - pokedex-spring
 
 networks:
   pokedex-network:
     driver: bridge
+
+volumes:
+  pokedex-db-data:

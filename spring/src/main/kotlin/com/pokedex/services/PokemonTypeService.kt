@@ -1,6 +1,6 @@
 package com.pokedex.services
 
-import com.pokedex.dtos.PokemonTypeSync
+import com.pokedex.dtos.PokemonTypeSyncDto
 import com.pokedex.entities.PokemonTypeEntity
 import com.pokedex.repositories.PokemonTypeRepository
 import com.fasterxml.jackson.core.type.TypeReference
@@ -21,10 +21,6 @@ class PokemonTypeService @Autowired constructor(
         return pokemonTypeRepo.findAll()
     }
 
-    fun findByType( type: String ): PokemonTypeEntity {
-        return pokemonTypeRepo.findByType(type )
-    }
-
     fun save(pokemonTypeEntity: PokemonTypeEntity): PokemonTypeEntity {
         return pokemonTypeRepo.save<PokemonTypeEntity>(pokemonTypeEntity)
     }
@@ -35,14 +31,13 @@ class PokemonTypeService @Autowired constructor(
 
     fun sync(jsonUrl: String) {
         try {
-            val pokemonTypesJson = fetchJsonFromUrl(jsonUrl)
-
-            val pokemonTypes: List<PokemonTypeEntity> = pokemonTypesJson.map { type: PokemonTypeSync ->
+            val pokemonTypesJson: List<PokemonTypeSyncDto> = fetchJsonFromUrl(jsonUrl)
+            val pokemonTypes: List<PokemonTypeEntity> = pokemonTypesJson.map {
                 PokemonTypeEntity(
-                    type = type.english,
-                    effective = type.effective,
-                    ineffective = type.ineffective,
-                    noEffect = type.noEffect
+                    type = it.english,
+                    effective = it.effective,
+                    ineffective = it.ineffective,
+                    noEffect = it.noEffect
                 )
             }
             saveAll(pokemonTypes)
@@ -51,14 +46,14 @@ class PokemonTypeService @Autowired constructor(
         }
     }
 
-    private fun fetchJsonFromUrl(url: String): List<PokemonTypeSync> {
+    private fun fetchJsonFromUrl(url: String): List<PokemonTypeSyncDto> {
         return webClient.get()
             .uri(url)
             .accept(MediaType.TEXT_PLAIN)
             .retrieve()
             .bodyToMono(String::class.java)
             .map { json ->
-                objectMapper.readValue(json, object : TypeReference<List<PokemonTypeSync>>() {})
+                objectMapper.readValue(json, object : TypeReference<List<PokemonTypeSyncDto>>() {})
             }
             .block() ?: emptyList()
     }

@@ -3,17 +3,17 @@ package com.pokedex.services
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.pokedex.dtos.AbilityDto
-import com.pokedex.dtos.BaseDto
-import com.pokedex.dtos.EvolutionDto
-import com.pokedex.dtos.EvolutionsDto
-import com.pokedex.dtos.ImagesDto
 import com.pokedex.dtos.PokemonDto
 import com.pokedex.dtos.PokemonSyncDto
-import com.pokedex.dtos.ProfileDto
+import com.pokedex.entities.PokemonAbilityEntity
 import com.pokedex.entities.PokemonEntity
+import com.pokedex.entities.PokemonEvolutionEntity
 import com.pokedex.entities.PokemonTypeEntity
+import com.pokedex.repositories.PokemonAbilityRepository
+import com.pokedex.repositories.PokemonEvolutionRepository
 import com.pokedex.repositories.PokemonRepository
+import com.pokedex.repositories.PokemonTypeRepository
+import com.pokedex.utils.toPokemonDto
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
@@ -22,118 +22,129 @@ import org.springframework.web.reactive.function.client.WebClient
 @Service
 class PokemonService @Autowired constructor(
     private val objectMapper: ObjectMapper,
-    private val pokemonRepository: PokemonRepository,
-    private val pokemonTypeService: PokemonTypeService,
+    private val pokemonRepo: PokemonRepository,
+    private val pokemonAbilityRepo: PokemonAbilityRepository,
+    private val pokemonTypeRepo: PokemonTypeRepository,
+    private val pokemonEvolutionRepo: PokemonEvolutionRepository,
     private val webClient: WebClient
 ) {
 
     fun save(pokemonEntity: PokemonEntity): PokemonEntity {
-        return pokemonRepository.save<PokemonEntity>(pokemonEntity)
-    }
-
-    fun saveAll(pokemonList: List<PokemonEntity>) {
-        pokemonRepository.saveAll(pokemonList)
+        return pokemonRepo.save<PokemonEntity>(pokemonEntity)
     }
 
     fun findById(id: Long): PokemonDto {
-        val pokemon = pokemonRepository.findById(id).orElseThrow { IllegalArgumentException("Pokemon with ID $id not found") }
-        return PokemonDto(
-            id = pokemon.id!!,
-            name = pokemon.name!!,
-            type = pokemon.types!!.map {
-                it.type!!
-            },
-            description = pokemon.description!!,
-            species = pokemon.species!!,
-            base = pokemon.base,
-            evolutions = pokemon.evolutions!!,
-            profile = pokemon.profile!!,
-            images = pokemon.images!!
-        )
+        val pokemon = pokemonRepo.findById(id).orElseThrow { IllegalArgumentException("Pokemon with ID $id not found") }
+        return pokemon.toPokemonDto()
     }
 
-    fun findAll(): List<PokemonDto> {
-        return pokemonRepository.findAll().map {
-            PokemonDto(
-                id = it.id!!,
-                name = it.name!!,
-                type = it.types!!.map {
-                    it.type!!
-                },
-                description = it.description!!,
-                species = it.species!!,
-                base = it.base,
-                evolutions = it.evolutions!!,
-                profile = it.profile!!,
-                images = it.images!!
-            )
-            }.sortedBy { it.id }
+    fun findTopByHp(limit: Int?): List<PokemonDto> {
+        return pokemonRepo.findTopByHp( limit = limit ).map { it.toPokemonDto() }
+    }
+
+    fun findTopByAttack(limit: Int?): List<PokemonDto> {
+        return pokemonRepo.findTopByAttack( limit = limit ).map { it.toPokemonDto() }
+    }
+
+    fun findTopByDefense(limit: Int?): List<PokemonDto> {
+        return pokemonRepo.findTopByDefense( limit = limit ).map { it.toPokemonDto() }
+    }
+
+    fun findTopBySpecialAttack(limit: Int?): List<PokemonDto> {
+        return pokemonRepo.findTopBySpecialAttack( limit = limit ).map { it.toPokemonDto() }
+    }
+
+    fun findTopBySpecialDefense(limit: Int?): List<PokemonDto> {
+        return pokemonRepo.findTopBySpecialDefense( limit = limit ).map { it.toPokemonDto() }
+    }
+
+    fun findTopBySpeed(limit: Int?): List<PokemonDto> {
+        return pokemonRepo.findTopBySpeed( limit = limit ).map { it.toPokemonDto() }
+    }
+
+    fun findAll(cursor: Int?, limit: Int?): List<PokemonDto> {
+        return pokemonRepo
+            .findAll( cursor = cursor, limit = limit )
+            .map { it.toPokemonDto() }
     }
 
     fun sync(jsonUrl: String) {
         try {
-            val pokemonList = fetchJsonFromUrl(jsonUrl)
+            val pokemonSyncDtoList: List<PokemonSyncDto> = fetchJsonFromUrl(jsonUrl)
+            val pokemonTypesEntity: List<PokemonTypeEntity> = pokemonTypeRepo.findAll()
 
-            pokemonList.forEach({ pokemon: PokemonSyncDto ->
-                val types: List<PokemonTypeEntity> = pokemon.type.map { pokemonTypeService.findByType( it ) }
+            pokemonSyncDtoList.forEach { pokemonSyncDto: PokemonSyncDto ->
+                // Base
+                val hp = pokemonSyncDto.base?.hp
+                val attack = pokemonSyncDto.base?.attack
+                val defense = pokemonSyncDto.base?.defense
+                val specialAttack = pokemonSyncDto.base?.specialAttack
+                val specialDefense = pokemonSyncDto.base?.specialDefense
+                val speed = pokemonSyncDto.base?.speed
 
-                var base: BaseDto? = null
-                if (pokemon.base != null) {
-                    base = BaseDto(
-                        hp = pokemon.base.hp,
-                        attack = pokemon.base.attack,
-                        defense = pokemon.base.defense,
-                        specialAttack = pokemon.base.specialAttack,
-                        specialDefense = pokemon.base.specialDefense,
-                        speed = pokemon.base.speed
-                    )
-                }
+                // Profile
+                val height = pokemonSyncDto.profile.height
+                val weight = pokemonSyncDto.profile.weight
 
-                // Build Evolution Dto
-                val evolutions: EvolutionsDto = EvolutionsDto (prev = null, next = null)
-                if (pokemon.evolution.prev != null) {
-                    evolutions.prev = EvolutionDto(
-                        id = pokemon.evolution.prev[0].toLong(),
-                        condition = pokemon.evolution.prev[1]
-                    )
-                }
-                if (pokemon.evolution.next != null) {
-                    evolutions.next = pokemon.evolution.next.map {
-                        EvolutionDto(
-                            id = it[0].toLong(),
-                            condition = it[1]
-                        )
-                    }
-                }
-
-                val profile = ProfileDto(
-                    height = pokemon.profile.height,
-                    weight = pokemon.profile.weight,
-                    ability = pokemon.profile.ability.map {
-                        AbilityDto(
-                            ability = it[0],
-                            isHidden = it[1].toBoolean()
-                        )
-                    }
-                )
+                // Images
+                val sprite = pokemonSyncDto.image.sprite
+                val thumbnail = pokemonSyncDto.image.thumbnail
+                val hires = pokemonSyncDto.image.hires
 
                 val pokemonEntity = PokemonEntity(
-                    id = pokemon.id,
-                    name = pokemon.name.english,
-                    types = types,
-                    base = base,
-                    species = pokemon.species,
-                    description = pokemon.description,
-                    evolutions = evolutions,
-                    profile = profile,
-                    images = ImagesDto(
-                        sprite = pokemon.image.sprite,
-                        thumbnail = pokemon.image.thumbnail,
-                        hires = pokemon.image.hires
-                    ),
+                    id = pokemonSyncDto.id,
+                    name = pokemonSyncDto.name.english,
+                    types = pokemonTypesEntity.filter { it.type in pokemonSyncDto.type },
+                    species = pokemonSyncDto.species,
+                    description = pokemonSyncDto.description,
+                    hp = hp,
+                    attack = attack,
+                    defense = defense,
+                    specialAttack = specialAttack,
+                    specialDefense = specialDefense,
+                    speed = speed,
+                    height = height,
+                    weight = weight,
+                    sprite = sprite,
+                    thumbnail = thumbnail,
+                    hires = hires,
+                    evolutions = listOf<PokemonEvolutionEntity>(),
+                    abilities = listOf<PokemonAbilityEntity>(),
                 )
-                save(pokemonEntity)
-            })
+                val savedPokemonEntity = save(pokemonEntity)
+
+                // Evolutions
+                if (pokemonSyncDto.evolution.prev != null) {
+
+                    val evolution = PokemonEvolutionEntity(
+                        pokemon = savedPokemonEntity,
+                        evolutionId = pokemonSyncDto.evolution.prev[0].toLong(),
+                        condition = pokemonSyncDto.evolution.prev[1],
+                        isPrev = true,
+                        isNext = false,
+                    )
+                    pokemonEvolutionRepo.save<PokemonEvolutionEntity>(evolution)
+                }
+                pokemonSyncDto.evolution.next?.forEach {
+                    val evolution = PokemonEvolutionEntity(
+                        pokemon = savedPokemonEntity,
+                        evolutionId = it[0].toLong(),
+                        condition = it[1],
+                        isPrev = false,
+                        isNext = true
+                    )
+                    pokemonEvolutionRepo.save<PokemonEvolutionEntity>(evolution)
+                }
+
+                pokemonSyncDto.profile.ability.forEach {
+                    val ability = PokemonAbilityEntity(
+                        pokemon = savedPokemonEntity,
+                        ability = it[0],
+                        isHidden = it[1].toBoolean(),
+                    )
+                    pokemonAbilityRepo.save<PokemonAbilityEntity>(ability)
+                }
+            }
         } catch (ex: Exception) {
             throw Exception("Error while syncing Pokémon data: ${ex.message}")
         }

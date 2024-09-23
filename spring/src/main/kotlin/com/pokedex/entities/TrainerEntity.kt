@@ -7,26 +7,25 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.JoinTable
-import jakarta.persistence.ManyToMany
+import jakarta.persistence.OneToMany
+import jakarta.persistence.OrderBy
 import jakarta.persistence.Table
 
 @Entity
 @Table( name = "trainers")
 class TrainerEntity() {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false, nullable = false)
-    var id: Long? = null
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long = 0L
 
     @Column(name = "name")
-    var name: String? = null
+    var name: String = ""
 
-    @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "trainer_pokemons",
-        joinColumns = [JoinColumn(name = "trainer_id")],
-        inverseJoinColumns = [JoinColumn(name = "pokemon_id")]
+    @OneToMany(
+        mappedBy = "trainer",
+        cascade = [CascadeType.ALL],
+        fetch = FetchType.LAZY
     )
-    var pokemons: MutableSet<PokemonEntity> = mutableSetOf()
+    @OrderBy("createdAt ASC")
+    var trainerPokemons: List<TrainerPokemonEntity> = emptyList<TrainerPokemonEntity>()
 }

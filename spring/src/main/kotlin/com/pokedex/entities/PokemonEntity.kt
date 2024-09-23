@@ -1,10 +1,5 @@
 package com.pokedex.entities
 
-import com.pokedex.dtos.BaseDto
-import com.pokedex.dtos.EvolutionsDto
-import com.pokedex.dtos.ImagesDto
-import com.pokedex.dtos.ProfileDto
-import com.vladmihalcea.hibernate.type.json.JsonType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -12,40 +7,63 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.JoinTable
 import jakarta.persistence.ManyToMany
+import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
-import org.hibernate.annotations.Type
 
 @Entity
 @Table(name = "pokemons")
 class PokemonEntity(
     @Id
     @Column(name = "id", updatable = false, nullable = false)
-    var id: Long? = null,
+    var id: Long = 0L,
 
     @Column(name = "name")
-    var name: String? = null,
+    var name: String = "",
 
     @Column(name = "species")
-    var species: String? = null,
+    var species: String = "",
 
     @Column(name = "description")
-    var description: String? = null,
+    var description: String = "",
 
-    @Type(JsonType::class)
-    @Column(name = "evolutions", columnDefinition = "jsonb")
-    var evolutions: EvolutionsDto? = null,
+    @Column(name = "hp")
+    var hp: Int? = null,
 
-    @Type(JsonType::class)
-    @Column(name = "base", columnDefinition = "jsonb")
-    var base: BaseDto? = null,
+    @Column(name = "attack")
+    var attack: Int? = null,
 
-    @Type(JsonType::class)
-    @Column(name = "profile", columnDefinition = "jsonb")
-    var profile: ProfileDto? = null,
+    @Column(name = "defense")
+    var defense: Int? = null,
 
-    @Type(JsonType::class)
-    @Column(name = "image", columnDefinition = "jsonb")
-    var images: ImagesDto? = null,
+    @Column(name = "special_attack")
+    var specialAttack: Int? = null,
+
+    @Column(name = "special_defense")
+    var specialDefense: Int? = null,
+
+    @Column(name = "speed")
+    var speed: Int? = null,
+
+    @OneToMany(mappedBy = "pokemon", fetch = FetchType.LAZY)
+    var evolutions: List<PokemonEvolutionEntity> = mutableListOf<PokemonEvolutionEntity>(),
+
+    @Column(name = "height")
+    var height: String = "",
+
+    @Column(name = "weight")
+    var weight: String = "",
+
+    @OneToMany(mappedBy = "pokemon", fetch = FetchType.LAZY)
+    var abilities: List<PokemonAbilityEntity> = emptyList<PokemonAbilityEntity>(),
+
+    @Column(name = "sprites")
+    var sprite: String? = null,
+
+    @Column(name = "thumbnail")
+    var thumbnail: String? = null,
+
+    @Column(name = "hires")
+    var hires: String? = null,
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -53,5 +71,5 @@ class PokemonEntity(
         joinColumns = [JoinColumn(name = "pokemon_id")],
         inverseJoinColumns = [JoinColumn(name = "type_id")]
     )
-    var types: List<PokemonTypeEntity>? = null
+    var types: List<PokemonTypeEntity> = emptyList<PokemonTypeEntity>()
 )
