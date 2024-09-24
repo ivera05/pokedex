@@ -97,7 +97,7 @@ class PokemonPortImpl( @PersistenceContext private val entityManager: EntityMana
 
     override fun findAll( cursor: Int?, limit: Int? ): List<PokemonEntity> {
         val queryStr = """
-            SELECT p FROM pokemon p WHERE p.id > :cursor ORDER BY p.id ASC
+            SELECT p FROM PokemonEntity p WHERE p.id > :cursor ORDER BY p.id ASC
         """.trimIndent()
         val query = entityManager.createQuery(queryStr,PokemonEntity::class.java)
         query.setParameter("cursor", cursor ?: 0)
