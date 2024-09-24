@@ -99,16 +99,16 @@ docker-compose up --build -d
 3. This will set up the PostgreSQL database, run the backend on port `8080`, and the frontend on port `3000`.
 
 ### Without Docker
-1. Follow the Backend Setup and Frontend Setup instructions above.
+1. Follow the [Backend Setup](#backend-setup) and [Frontend Setup](#frontend-setup) instructions above.
 2. Start the backend and frontend servers in their respective directories.
 
 ## API Documentation
 The API exposes several endpoints for managing resources. Here's a basic list of endpoints (expand as necessary for your app):
 
-* GET /api/pokemons: Fetch all Pokemons.
-* POST /api/pokemons: Create a new Pokemon.
-* GET /api/pokemons/{id}: Fetch a specific Pokemon by ID.
-* PUT /api/pokemons/{id}: Update a specific Pokemon.
+* `GET /pokemon`: Fetch all Pokemons.
+* `GET /pokemon/{id}`: Fetch a specific Pokemon by ID.
+* `POST /pokemon/sync`: Syncs Pokemons.
+* `GET /pokemon/top_speed`: Fetch Pokemons by speed, in descending order.
 
 For a detailed API documentation, visit `/swagger-ui.html` (if you have Swagger enabled) or use tools like Postman to interact with the API.
 
