@@ -5,19 +5,19 @@ This project is a full-stack web application built with __Kotlin__ and __Spring 
 ## Table of Contents
 * [Technologies Used](#technologies-used)
 * [Project Setup](#project-setup)
-* [Backend Setup](#backend-setup)
-* [Frontend Setup](#frontend-setup)
+  * [Backend Setup](#backend-setup)
+  * [Frontend Setup](#frontend-setup)
 * [Running the Project](#running-the-project)
-* [Docker Setup](#docker-setup)
-* [Without Docker](#without-docker)
+  * [Docker Setup](#docker-setup)
+  * [Without Docker](#without-docker)
 * [API Documentation](#api-documentation)
 
 ## Technologies Used
-__Backend__: Kotlin, Spring Boot, JPA, Flyway
-__Frontend__: Next.js, React, TypeScript
-__Database__: PostgreSQL
-__Containerization__: Docker, Docker Compose
-__Tools__: Maven, PNPM, ESLint, Prettier
+* __Backend__: Kotlin, Spring Boot, JPA, Flyway
+* __Frontend__: Next.js, React, TypeScript
+* __Database__: PostgreSQL
+* __Containerization__: Docker, Docker Compose
+* __Tools__: Maven, PNPM, ESLint, Prettier
 
 ## Project Setup
 ### Prerequisites
@@ -25,7 +25,7 @@ Ensure you have the following tools installed:
 
 * __Java 17+__
 * __Node.js 18+__
-* __Maven 4+__ (for backend)
+* __Maven__ (for backend)
 * __PNPM__ (for frontend)
 * __Docker__ (optional, but recommended)
 
@@ -47,13 +47,13 @@ SPRING_DATASOURCE_PASSWORD=your_db_password
 3. Run the Flyway migration to set up the database schema:
 
 ```bash
-./gradlew flywayMigrate
+./mvnw flyway:migrate
 ```
 
 4. Build and run the backend:
 
 ```bash
-./gradlew bootRun
+./mvnw spring-boot:run
 ```
 
 By default, the Spring Boot application runs on http://localhost:8080.
@@ -68,7 +68,7 @@ cd frontend
 2. Install the dependencies:
 
 ```bash
-yarn install
+pnpm install
 ```
 
 3. Create a .env.local file in the `frontend` directory and set up the API URL:
@@ -93,7 +93,7 @@ The project is Dockerized, so you can run both the frontend and backend using Do
 2. Run the following command to start both the frontend and backend services:
 
 ```bash
-docker-compose up --build
+docker-compose up --build -d
 ```
 
 3. This will set up the PostgreSQL database, run the backend on port `8080`, and the frontend on port `3000`.
@@ -112,3 +112,5 @@ The API exposes several endpoints for managing resources. Here's a basic list of
 
 For a detailed API documentation, visit `/swagger-ui.html` (if you have Swagger enabled) or use tools like Postman to interact with the API.
 
+## License
+This project is licensed under the MIT License.
