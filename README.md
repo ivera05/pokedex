@@ -36,12 +36,21 @@ Ensure you have the following tools installed:
 cd backend
 ```
 
-2. Create a .env file in the backend directory with the following content:
+2. Create `application.properties` from example:
 
 ```bash
-SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/your_database
-SPRING_DATASOURCE_USERNAME=your_db_user
-SPRING_DATASOURCE_PASSWORD=your_db_password
+cp src/main/kotlin/com/pokedex/resources/application.properties.example src/main/kotlin/com/pokedex/resources/application.properties
+```
+
+3. Update properties with the following content:
+
+```bash
+spring.datasource.url=jdbc:postgresql://pokedex-db:5432/{your_database}
+spring.datasource.username={your_db_user}
+spring.datasource.password={your_db_password}
+spring.flyway.url=jdbc:postgresql://pokedex-db:5432/{your_datavase}
+spring.flyway.user={your_db_user}
+spring.flyway.password={your_db_password}
 ```
 
 3. Run the Flyway migration to set up the database schema:
@@ -90,7 +99,22 @@ The project is Dockerized, so you can run both the frontend and backend using Do
 
 1. Ensure Docker is installed and running.
 
-2. Run the following command to start both the frontend and backend services:
+2. Update the database settings on `docker-compose.yml`, these should match the values on the backend `application.properties`
+
+```yaml
+pokedex-db:
+    environment:
+      - 'POSTGRES_DB={your_database}'
+      - 'POSTGRES_PASSWORD={your_db_pasword}'
+      - 'POSTGRES_USER={your_db_user}'
+pokedex-kotlin:
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://pokedex-db:5432/{your_database}
+      SPRING_DATASOURCE_USERNAME: {your_db_user}
+      SPRING_DATASOURCE_PASSWORD: {your_db_password}
+```
+
+3. Run the following command to start the postgreSQL, frontend and backend services:
 
 ```bash
 docker-compose up --build -d
