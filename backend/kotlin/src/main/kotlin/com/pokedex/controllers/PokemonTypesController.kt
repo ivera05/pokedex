@@ -11,18 +11,18 @@ class PokemonTypesController(
     private val pokemonTypeService: PokemonTypeService
 ) {
 
-    @GetMapping("/pokemon-types")
+    @GetMapping("/api/pokemon-types")
     fun findAll(): List<PokemonTypeEntity> {
         return pokemonTypeService.findAll()
     }
 
-    @PostMapping("/pokemon-types")
+    @PostMapping("/api/pokemon-types")
     fun create(pokemonTypeEntity: PokemonTypeEntity): PokemonTypeEntity {
         return pokemonTypeService.save(pokemonTypeEntity)
     }
 
-    @PostMapping("/pokemon-types/sync")
+    @PostMapping("/api/pokemon-types/sync")
     fun sync(){
-        return pokemonTypeService.sync("https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/types.json")
+        return pokemonTypeService.sync()
     }
 }

@@ -1,21 +1,21 @@
 package com.pokedex.services
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.pokedex.dtos.PokemonTypeSyncDto
 import com.pokedex.entities.PokemonTypeEntity
 import com.pokedex.repositories.PokemonTypeRepository
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
-import org.springframework.web.reactive.function.client.WebClient
+import java.nio.file.Files
+import java.nio.file.Paths
 
 @Service
 class PokemonTypeService @Autowired constructor(
-    private val objectMapper: ObjectMapper,
     private val pokemonTypeRepo: PokemonTypeRepository,
-    private val webClient: WebClient
 ) {
+    private val JSON_FILENAME: String = "static/pokemon_types.json"
+    private val objectMapper = jacksonObjectMapper()
 
     fun findAll(): List<PokemonTypeEntity> {
         return pokemonTypeRepo.findAll()
@@ -29,9 +29,9 @@ class PokemonTypeService @Autowired constructor(
         pokemonTypeRepo.saveAll(pokemonList)
     }
 
-    fun sync(jsonUrl: String) {
+    fun sync() {
         try {
-            val pokemonTypesJson: List<PokemonTypeSyncDto> = fetchJsonFromUrl(jsonUrl)
+            val pokemonTypesJson: List<PokemonTypeSyncDto> = fetchJsonFile()
             val pokemonTypes: List<PokemonTypeEntity> = pokemonTypesJson.map {
                 PokemonTypeEntity(
                     type = it.english,
@@ -46,15 +46,16 @@ class PokemonTypeService @Autowired constructor(
         }
     }
 
-    private fun fetchJsonFromUrl(url: String): List<PokemonTypeSyncDto> {
-        return webClient.get()
-            .uri(url)
-            .accept(MediaType.TEXT_PLAIN)
-            .retrieve()
-            .bodyToMono(String::class.java)
-            .map { json ->
-                objectMapper.readValue(json, object : TypeReference<List<PokemonTypeSyncDto>>() {})
-            }
-            .block() ?: emptyList()
+    private fun fetchJsonFile(): List<PokemonTypeSyncDto> {
+        val classLoader = this::class.java.classLoader
+        val resource = classLoader.getResource(JSON_FILENAME)
+
+        if (resource != null) {
+            val path = Paths.get(resource.toURI())
+            val jsonContent = Files.readString(path) // Read the file contents
+            return objectMapper.readValue(jsonContent) // Convert JSON to Pokemon object
+        } else {
+            throw RuntimeException("File not found! $JSON_FILENAME")
+        }
     }
 }

@@ -33,7 +33,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-webflux</artifactId>
+			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -103,7 +103,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.flywaydb</groupId>
-			<artifactId>flyway-core</artifactId>
+			<artifactId>flyway-database-postgresql</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springdoc</groupId>
@@ -116,6 +116,12 @@
 			<version>2.21.1</version>
 		</dependency>
 		<!-- JWT -->
+		<dependency>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
+			<version>6.0.0</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-api</artifactId>
@@ -132,6 +138,11 @@
 			<artifactId>jjwt-jackson</artifactId>
 			<version>0.11.5</version>
 			<scope>runtime</scope>
+		</dependency>
+		<!-- Logger -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-logging</artifactId>
 		</dependency>
 	</dependencies>
 

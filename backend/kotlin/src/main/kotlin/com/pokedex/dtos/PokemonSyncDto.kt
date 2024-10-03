@@ -16,10 +16,15 @@ data class PokemonSyncDto(
     val image: ImageSyncDto
 )
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class NameSyncDto(
-    val english: String
+    val english: String,
+    val japanese: String,
+    val chinese: String,
+    val french: String,
 )
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class BaseSyncDto(
     @JsonProperty("HP")
     val hp: Int,
@@ -35,18 +40,20 @@ data class BaseSyncDto(
     val speed: Int
 )
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class EvolutionSyncDto(
     val prev: List<String>? = null,
     val next: List<List<String>>? = null
 )
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class ProfileSyncDto(
     val height: String,
     val weight: String,
     val ability: List<List<String>>
 )
 
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class ImageSyncDto(
     val sprite: String?,
     val thumbnail: String?,

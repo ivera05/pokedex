@@ -1,6 +1,5 @@
 package com.pokedex.repositories
 
-import com.pokedex.entities.TrainerEntity
 import com.pokedex.entities.UserEntity
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
@@ -14,9 +13,10 @@ interface UserPort {
 class UserPortImpl( @PersistenceContext private val entityManager: EntityManager): UserPort {
     override fun findByUsername(username: String): UserEntity? {
         val queryStr = """
-            SELECT * FROM UserEntity u WHERE username = :username 
+            SELECT u FROM UserEntity u WHERE username = :username 
         """.trimIndent()
         val query = entityManager.createQuery(queryStr, UserEntity::class.java)
+        query.setParameter("username", username)
 
         return query.singleResult
     }

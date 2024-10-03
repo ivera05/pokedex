@@ -13,48 +13,48 @@ class PokemonController(
     private val service: PokemonService
 ) {
 
-    @GetMapping("/pokemon")
+    @GetMapping("/api/pokemon")
     fun findAll( @RequestParam cursor: Int?, @RequestParam limit: Int? ): List<PokemonDto> {
         return service.findAll(cursor = cursor, limit = limit)
     }
 
-    @GetMapping("/pokemon/{id}")
+    @GetMapping("/api/pokemon/{id}")
     fun findById( @PathVariable id: String ): PokemonDto {
         return service.findById(id.toLong())
     }
 
-    @GetMapping("/pokemon/top_hp")
+    @GetMapping("/api/pokemon/top_hp")
     fun findTopByHp( @RequestParam limit: Int? ): List<PokemonDto> {
         return service.findTopByHp( limit = limit )
     }
 
-    @GetMapping("/pokemon/top_attack")
+    @GetMapping("/api/pokemon/top_attack")
     fun findTopByAttack( @RequestParam limit: Int? ): List<PokemonDto> {
         return service.findTopByAttack( limit = limit )
     }
 
-    @GetMapping("/pokemon/top_defense")
+    @GetMapping("/api/pokemon/top_defense")
     fun findTopByDefense( @RequestParam limit: Int? ): List<PokemonDto> {
         return service.findTopByDefense( limit = limit )
     }
 
-    @GetMapping("/pokemon/top_special_attack")
+    @GetMapping("/api/pokemon/top_special_attack")
     fun findTopBySpecialAttack( @RequestParam limit: Int? ): List<PokemonDto> {
         return service.findTopBySpecialAttack( limit = limit )
     }
 
-    @GetMapping("/pokemon/top_special_defense")
+    @GetMapping("/api/pokemon/top_special_defense")
     fun findTopBySpecialDefense( @RequestParam limit: Int? ): List<PokemonDto> {
         return service.findTopBySpecialDefense( limit = limit )
     }
 
-    @GetMapping("/pokemon/top_speed")
+    @GetMapping("/api/pokemon/top_speed")
     fun findTopBySpeed( @RequestParam limit: Int? ): List<PokemonDto> {
         return service.findTopBySpeed( limit = limit )
     }
 
-    @PostMapping("/pokemon/sync")
+    @PostMapping("/api/pokemon/sync")
     fun sync(){
-        return service.sync("https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/pokedex.json")
+        return service.sync()
     }
 }

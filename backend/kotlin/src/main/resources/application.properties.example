@@ -1,5 +1,7 @@
 spring.application.name=pokedex
+logging.level.com.fasterxml.jackson=DEBUG
 logging.level.org.flyway=DEBUG
+logging.level.org.springframework.web=DEBUG
 spring.codec.max-in-memory-size=2MB
 spring.datasource.url=jdbc:postgresql://localhost:5432/{database_name}
 spring.datasource.username={db username}

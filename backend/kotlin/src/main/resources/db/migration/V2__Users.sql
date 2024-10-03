@@ -3,13 +3,8 @@ CREATE TABLE IF NOT EXISTS users (
     id          BIGSERIAL   PRIMARY KEY,
     username    VARCHAR     UNIQUE  NOT NULL,
     password    VARCHAR     NOT NULL,
+    role        VARCHAR     NOT NULL DEFAULT 'USER',
     created_at  TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
     updated_at  TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
     deleted_at  TIMESTAMP   NULL
-);
-
-CREATE TABLE IF NOT EXISTS user_roles (
-    id      BIGSERIAL   PRIMARY KEY,
-    role    VARCHAR     NOT NULL,
-    FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE
 );

@@ -11,12 +11,12 @@ class TrainerController(
     private val trainerService: TrainerService
 ) {
 
-    @GetMapping("/trainer")
+    @GetMapping("/api/trainer")
     fun findAll(): List<TrainerEntity> {
         return trainerService.findAll()
     }
 
-    @GetMapping("/trainer/{id}")
+    @GetMapping("/api/trainer/{id}")
     fun findById(@PathVariable id: String): TrainerEntity {
         return trainerService.findById(id.toLong())
     }
