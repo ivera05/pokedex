@@ -1,12 +1,12 @@
 import { lusitana } from '@/app/ui/fonts';
-import AllPokemon from '../ui/pokedex/pokedex-list';
+import AllPokemon from '../ui/dashboard/pokedex-list';
 import { Pokemon } from '../lib/definitions';
 import Search from '../ui/search';
 
 const apiBaseUrl = process.env.API_BASE_URL;
 
 async function getPokemons() {
-    let apiUrl = `${apiBaseUrl}pokemon`;
+    let apiUrl = `${apiBaseUrl}/pokemon`;
     let pokemons = [];
     console.log('Pulled pokemons from :', apiUrl);
 

@@ -32,6 +32,7 @@ class AuthenticationService(
         val refreshToken = createRefreshToken(user)
 
         return AuthResponse(
+            username = user.username,
             accessToken = accessToken,
             refreshToken = refreshToken,
         )

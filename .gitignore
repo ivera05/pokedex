@@ -28,4 +28,3 @@ node_modules
 .next
 backend/spring/target
 .idea
-.application.properties
