@@ -14,7 +14,7 @@ import jakarta.persistence.Table
 class PokemonAbilityEntity (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)  // Ensure auto-generation of ID
-    var id: Long? = null,
+    var id: Long = 0L,
 
     @ManyToOne()
     @JoinColumn(name="pokemon_id", nullable = false)

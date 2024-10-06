@@ -17,9 +17,9 @@ class PokemonEvolutionEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)  // Ensure auto-generation of ID
     var id: Long = 0L,
 
-    @ManyToOne()
+    @ManyToOne(optional = false)
     @JoinColumn(name="pokemon_id", nullable = false)
-    var pokemon: PokemonEntity = PokemonEntity(),
+    var pokemon: PokemonEntity? = null,
 
     @Column(name = "evolution_id")
     var evolutionId: Long = 0L,

@@ -1,5 +1,6 @@
 package com.pokedex.entities
 
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -44,8 +45,8 @@ class PokemonEntity(
     @Column(name = "speed")
     var speed: Int? = null,
 
-    @OneToMany(mappedBy = "pokemon", fetch = FetchType.LAZY)
-    var evolutions: List<PokemonEvolutionEntity> = mutableListOf<PokemonEvolutionEntity>(),
+    @OneToMany(mappedBy = "pokemon", fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST, CascadeType.MERGE], orphanRemoval = true)
+    var evolutions: MutableList<PokemonEvolutionEntity> = mutableListOf<PokemonEvolutionEntity>(),
 
     @Column(name = "height")
     var height: String = "",
@@ -54,7 +55,7 @@ class PokemonEntity(
     var weight: String = "",
 
     @OneToMany(mappedBy = "pokemon", fetch = FetchType.LAZY)
-    var abilities: List<PokemonAbilityEntity> = emptyList<PokemonAbilityEntity>(),
+    var abilities: MutableList<PokemonAbilityEntity> = mutableListOf<PokemonAbilityEntity>(),
 
     @Column(name = "sprites")
     var sprite: String? = null,
@@ -71,5 +72,5 @@ class PokemonEntity(
         joinColumns = [JoinColumn(name = "pokemon_id")],
         inverseJoinColumns = [JoinColumn(name = "type_id")]
     )
-    var types: List<PokemonTypeEntity> = emptyList<PokemonTypeEntity>()
+    var types: MutableList<PokemonTypeEntity> = mutableListOf<PokemonTypeEntity>()
 )

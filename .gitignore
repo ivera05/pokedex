@@ -26,5 +26,6 @@ hs_err_pid*
 replay_pid*
 node_modules
 .next
-backend/spring/target
+backend/kotlin/target
 .idea
+backend/kotlin/.idea

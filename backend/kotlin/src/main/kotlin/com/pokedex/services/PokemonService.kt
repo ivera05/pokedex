@@ -14,7 +14,11 @@ import com.pokedex.repositories.PokemonEvolutionRepository
 import com.pokedex.repositories.PokemonRepository
 import com.pokedex.repositories.PokemonTypeRepository
 import com.pokedex.utils.toPokemonDto
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -38,33 +42,39 @@ class PokemonService @Autowired constructor(
         return pokemon.toPokemonDto()
     }
 
-    fun findTopByHp(limit: Int?): List<PokemonDto> {
-        return pokemonRepo.findTopByHp( limit = limit ).map { it.toPokemonDto() }
+    fun findTopByHp(size: Int): List<PokemonDto> {
+        return pokemonRepo.findTopByHp( limit = size ).map { it.toPokemonDto() }
     }
 
-    fun findTopByAttack(limit: Int?): List<PokemonDto> {
-        return pokemonRepo.findTopByAttack( limit = limit ).map { it.toPokemonDto() }
+    fun findTopByAttack(size: Int): List<PokemonDto> {
+        return pokemonRepo.findTopByAttack( limit = size ).map { it.toPokemonDto() }
     }
 
-    fun findTopByDefense(limit: Int?): List<PokemonDto> {
-        return pokemonRepo.findTopByDefense( limit = limit ).map { it.toPokemonDto() }
+    fun findTopByDefense(size: Int): List<PokemonDto> {
+        return pokemonRepo.findTopByDefense( limit = size ).map { it.toPokemonDto() }
     }
 
-    fun findTopBySpecialAttack(limit: Int?): List<PokemonDto> {
-        return pokemonRepo.findTopBySpecialAttack( limit = limit ).map { it.toPokemonDto() }
+    fun findTopBySpecialAttack(size: Int): List<PokemonDto> {
+        return pokemonRepo.findTopBySpecialAttack( limit = size ).map { it.toPokemonDto() }
     }
 
-    fun findTopBySpecialDefense(limit: Int?): List<PokemonDto> {
-        return pokemonRepo.findTopBySpecialDefense( limit = limit ).map { it.toPokemonDto() }
+    fun findTopBySpecialDefense(size: Int): List<PokemonDto> {
+        return pokemonRepo.findTopBySpecialDefense( limit = size ).map { it.toPokemonDto() }
     }
 
-    fun findTopBySpeed(limit: Int?): List<PokemonDto> {
-        return pokemonRepo.findTopBySpeed( limit = limit ).map { it.toPokemonDto() }
+    fun findTopBySpeed(size: Int): List<PokemonDto> {
+        return pokemonRepo.findTopBySpeed( limit = size ).map { it.toPokemonDto() }
     }
 
-    fun findAll(cursor: Int?, limit: Int?): List<PokemonDto> {
+    fun findAll(page: Int, size: Int): Page<PokemonDto> {
+        val pageable: Pageable = PageRequest.of(page, size)
+        return pokemonRepo.findAll(pageable).map { it.toPokemonDto() }
+    }
+
+    fun search(query: String, page: Int, size: Int): Page<PokemonDto> {
+        val pageable: Pageable = PageRequest.of(page, size)
         return pokemonRepo
-            .findAll( cursor = cursor, limit = limit )
+            .search( query = query, pageable = pageable )
             .map { it.toPokemonDto() }
     }
 
@@ -91,10 +101,13 @@ class PokemonService @Autowired constructor(
                 val thumbnail = pokemonSyncDto.image.thumbnail
                 val hires = pokemonSyncDto.image.hires
 
+                // Types
+                val types = pokemonTypesEntity.filter { it.type in pokemonSyncDto.type } as MutableList<PokemonTypeEntity>
+
                 val pokemonEntity = PokemonEntity(
                     id = pokemonSyncDto.id,
                     name = pokemonSyncDto.name.english,
-                    types = pokemonTypesEntity.filter { it.type in pokemonSyncDto.type },
+                    types = types,
                     species = pokemonSyncDto.species,
                     description = pokemonSyncDto.description,
                     hp = hp,
@@ -108,16 +121,15 @@ class PokemonService @Autowired constructor(
                     sprite = sprite,
                     thumbnail = thumbnail,
                     hires = hires,
-                    evolutions = listOf<PokemonEvolutionEntity>(),
-                    abilities = listOf<PokemonAbilityEntity>(),
+                    evolutions = mutableListOf<PokemonEvolutionEntity>(),
+                    abilities = mutableListOf<PokemonAbilityEntity>(),
                 )
-                val savedPokemonEntity = save(pokemonEntity)
+                val savedPokemon = save(pokemonEntity)
 
                 // Evolutions
                 if (pokemonSyncDto.evolution.prev != null) {
-
                     val evolution = PokemonEvolutionEntity(
-                        pokemon = savedPokemonEntity,
+                        pokemon = savedPokemon,
                         evolutionId = pokemonSyncDto.evolution.prev[0].toLong(),
                         condition = pokemonSyncDto.evolution.prev[1],
                         isPrev = true,
@@ -127,7 +139,7 @@ class PokemonService @Autowired constructor(
                 }
                 pokemonSyncDto.evolution.next?.forEach {
                     val evolution = PokemonEvolutionEntity(
-                        pokemon = savedPokemonEntity,
+                        pokemon = savedPokemon,
                         evolutionId = it[0].toLong(),
                         condition = it[1],
                         isPrev = false,
@@ -138,7 +150,7 @@ class PokemonService @Autowired constructor(
 
                 pokemonSyncDto.profile.ability.forEach {
                     val ability = PokemonAbilityEntity(
-                        pokemon = savedPokemonEntity,
+                        pokemon = savedPokemon,
                         ability = it[0],
                         isHidden = it[1].toBoolean(),
                     )
@@ -146,6 +158,7 @@ class PokemonService @Autowired constructor(
                 }
             }
         } catch (ex: Exception) {
+            LOG.debug(ex.toString())
             throw Exception("Error while syncing Pokémon data: ${ex.message}")
         }
     }
@@ -161,5 +174,9 @@ class PokemonService @Autowired constructor(
         } else {
             throw RuntimeException("File not found! $JSON_FILENAME")
         }
+    }
+
+    companion object {
+        private val LOG = LoggerFactory.getLogger(PokemonService::class.java)
     }
 }

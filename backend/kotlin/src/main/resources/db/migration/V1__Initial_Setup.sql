@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
 CREATE TABLE IF NOT EXISTS pokemon_types (
     id      BIGSERIAL   PRIMARY KEY,
     name    VARCHAR     NOT NULL,
@@ -25,20 +27,26 @@ CREATE TABLE IF NOT EXISTS pokemons (
     hires       VARCHAR     NULL
 );
 
+CREATE INDEX idx_pokemon_name ON pokemons USING GIN (name gin_trgm_ops);
+
 CREATE TABLE IF NOT EXISTS pokemon_evolutions (
     id          BIGSERIAL   PRIMARY KEY,
     pokemon_id  INT         NOT NULL,
-    evolution_id INT       NOT NULL,
+    evolution_id INT        NOT NULL,
     condition   VARCHAR     NOT NULL,
     is_prev     BOOLEAN     NOT NULL,
-    is_next     BOOLEAN     NOT NULL
+    is_next     BOOLEAN     NOT NULL,
+    CONSTRAINT fk_pokemon_evolutions
+            FOREIGN KEY (pokemon_id) REFERENCES pokemons(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS pokemon_abilities (
     id          BIGSERIAL   PRIMARY KEY,
     pokemon_id  INT         NOT NULL,
     ability     INT         NOT NULL,
-    is_hidden   BOOLEAN     NOT NULL
+    is_hidden   BOOLEAN     NOT NULL,
+    CONSTRAINT fk_pokemon_abilities
+            FOREIGN KEY (pokemon_id) REFERENCES pokemons(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS pokemon_type_types (
