@@ -21,6 +21,12 @@ export const formatDateToLocal = (
   return formatter.format(date);
 };
 
+export const formatPokemonId = (
+  id: Number
+) => {
+  return '#' + id.toString().padStart(3, '0');
+}
+
 export const generateYAxis = (revenue: Revenue[]) => {
   // Calculate what labels we need to display on the y-axis
   // based on highest record and in 1000s

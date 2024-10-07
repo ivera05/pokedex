@@ -1,0 +1,161 @@
+/* Bug */
+.bg-bug-100 {
+    background-color: #f8d5a3;
+}
+
+.text-bug-700 {
+    color: #6d7815;
+}
+
+/* Dark */
+.bg-dark-100 {
+    background-color: #a29288;
+}
+
+.text-dark-700 {
+    color: #49392f;
+}
+
+/* Dragon */
+.bg-dragon-100 {
+    background-color: #97b3e6;
+}
+
+.text-dragon-700 {
+    color: #4924a1;
+}
+
+/* Electric */
+.bg-electric-100 {
+    background-color: #fae078;
+}
+
+.text-electric-700 {
+    color: #a1871f;
+}
+
+/* Fairy */
+.bg-fairy-100 {
+    background-color: #f4bdc9;
+}
+
+.text-fairy-700 {
+    color: #9b6470;
+}
+
+/* Fighting */
+.bg-fighting-100 {
+    background-color: #e6e0d4;
+}
+
+.text-fighting-700 {
+    color: #7d1f1a;
+}
+
+/* Fire */
+.bg-fire-100 {
+    background-color: #f5ac78;
+}
+
+.text-fire-700 {
+    color: #9c531f;
+}
+
+/* Flying */
+.bg-flying-100 {
+    background-color: #c6b7f5;
+}
+
+.text-flying-700 {
+    color: #6d5e9c;
+}
+
+/* Ghost */
+.bg-ghost-100 {
+    background-color: #a292bc;
+}
+
+.text-ghost-700 {
+    color: #493963;
+}
+
+/* Grass */
+.bg-grass-100 {
+    background-color: #a7db8d;
+}
+
+.text-grass-700 {
+    color: #4e8234;
+}
+
+/* Ground */
+.bg-ground-100 {
+    background-color: #e0c068;
+}
+
+.text-ground-700 {
+    color: #927d44;
+}
+
+/* Ice */
+.bg-ice-100 {
+    background-color: #bce6e6;
+}
+
+.text-ice-700 {
+    color: #638d8d;
+}
+
+/* Normal */
+.bg-normal-100 {
+    background-color: #d9d5d8;
+}
+
+.text-normal-700 {
+    color: #6d6d4e;
+}
+
+/* Poison */
+.bg-poison-100 {
+    background-color: #c183c1;
+}
+
+.text-poison-700 {
+    color: #682a68;
+}
+
+/* Psychic */
+.bg-psychic-100 {
+    background-color: #fa92b2;
+}
+
+.text-psychic-700 {
+    color: #a13959;
+}
+
+/* Rock */
+.bg-rock-100 {
+    background-color: #d1c17d;
+}
+
+.text-rock-700 {
+    color: #786824;
+}
+
+/* Steel */
+.bg-steel-100 {
+    background-color: #d1d1e0;
+}
+
+.text-steel-700 {
+    color: #787887;
+}
+
+/* Water */
+.bg-water-100 {
+    background-color: #9db7f5;
+}
+
+.text-water-700 {
+    color: #445e9c;
+}

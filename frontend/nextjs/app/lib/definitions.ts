@@ -134,6 +134,31 @@ export type Pokemon = {
   images: Images
 }
 
-export type Pokedex = {
-  pokemons: Pokemon[]
+export type PokemonPage = {
+  content: Pokemon[],
+  pageable: Pageable,
+  totalElements: number,
+  totalPages: number,
+  last: Boolean
+  size: number,
+  number: number,
+  sort: Sort,
+  numberOfElements: number,
+  first: Boolean,
+  empty: Boolean
+}
+
+export type Pageable = {
+  pageNumber: number,
+  pageSize: number,
+  sort: Sort,
+  offset: number,
+  paged: Boolean,
+  unpaged: Boolean,
+}
+
+export type Sort = {
+  empty: Boolean,
+  sorted: Boolean,
+  unsorted: Boolean
 }

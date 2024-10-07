@@ -41,7 +41,7 @@ export default async function AllPokemon({
                 <div>
                   <p className="text-xl font-medium">
                     {pokemon.type}
-                  </p>                    
+                  </p>
                 </div>
               </div>
             </div>

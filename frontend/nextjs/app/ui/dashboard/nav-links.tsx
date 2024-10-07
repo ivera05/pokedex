@@ -12,13 +12,13 @@ import { usePathname } from 'next/navigation';
 // Map of links to display in the side navigation.
 // Depending on the size of the application, this would be stored in a database.
 const links = [
-  { name: 'Pokedex', href: '/dashboard', icon: HomeIcon },
+  { name: 'Home', href: '/dashboard', icon: HomeIcon },
   {
-    name: 'Pokemons',
+    name: 'Pokedex',
     href: '/dashboard/pokemons',
     icon: DocumentDuplicateIcon,
   },
-  { name: 'Types', href: '/dashboard/types', icon: UserGroupIcon },
+  { name: 'Trainers', href: '/dashboard/types', icon: UserGroupIcon },
 ];
 
 export default function NavLinks() {

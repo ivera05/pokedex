@@ -1,4 +1,4 @@
-import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { EyeIcon, PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
 export function CreateInvoice() {
@@ -20,6 +20,17 @@ export function UpdateInvoice({ id }: { id: string }) {
       className="rounded-md border p-2 hover:bg-gray-100"
     >
       <PencilIcon className="w-5" />
+    </Link>
+  );
+}
+
+export function ViewPokemon({ id }: { id: string }) {
+  return (
+    <Link
+      href={`/dashboard/pokemons/${id}`}
+      className="rounded-md border p-2 hover:bg-gray-100"
+    >
+      <EyeIcon className="w-5" />
     </Link>
   );
 }
