@@ -1,18 +1,19 @@
 services:
   pokedex-db:
-    image: 'postgres:latest'
+    image: 'postgres:18-alpine'
     environment:
       - 'POSTGRES_DB=pokedex'
-      - 'POSTGRES_PASSWORD=secret'
-      - 'POSTGRES_USER=myuser'
+      - 'POSTGRES_PASSWORD=pokedex_password'
+      - 'POSTGRES_USER=pokedex_user'
     ports:
-      - 5432:5432
+      - "5432:5432"
     networks:
       - pokedex-network
     volumes:
-      - pokedex-db-data:/var/lib/postgresql/data
+      # Fix for Postgres 18+: Mount to the parent directory
+      - pokedex-db-data:/var/lib/postgresql
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U myuser" ]
+      test: [ "CMD-SHELL", "pg_isready -U pokedex_user -d pokedex" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -22,11 +23,12 @@ services:
     build:
       context: backend/kotlin/
     ports:
-      - 8080:8080
+      - "8080:8080"
     environment:
+      # Using the service name 'pokedex-db' as the hostname
       SPRING_DATASOURCE_URL: jdbc:postgresql://pokedex-db:5432/pokedex
-      SPRING_DATASOURCE_USERNAME: myuser
-      SPRING_DATASOURCE_PASSWORD: secret
+      SPRING_DATASOURCE_USERNAME: pokedex_user
+      SPRING_DATASOURCE_PASSWORD: pokedex_password
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
     depends_on:
       pokedex-db:
@@ -38,18 +40,19 @@ services:
     build:
       context: frontend/nextjs
     ports:
-      - 3000:3000
+      - "3000:3000"
     environment:
-      - NODE_ENV=development
-    volumes:
-      - ./nextjs-dashboard:/app
-      - /nextjs-dashboard/node_modules
-    stdin_open: true
-    tty: true
+      - NODE_ENV=production
+      # Connecting Next.js to the Kotlin API via the internal network
+      - NEXT_PUBLIC_API_URL=http://pokedex-kotlin:8080
+      - DATABASE_URL=postgres://pokedex_user:pokedex_password@pokedex-db:5432/pokedex
     networks:
       - pokedex-network
     depends_on:
-      - pokedex-kotlin
+      pokedex-kotlin:
+        condition: service_started
+      pokedex-db:
+        condition: service_healthy
 
 networks:
   pokedex-network:

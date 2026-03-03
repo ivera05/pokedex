@@ -1,40 +1,47 @@
-# Step 1: Base image
-FROM node:current-alpine AS base
-
-# Set working directory
+# 1. Dependencies Stage
+FROM node:25.6.1-alpine AS deps
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Install pnpm globally
-RUN npm install -g pnpm
+# Install pnpm directly (Corepack is no longer bundled in Node 25)
+RUN npm install -g pnpm@latest
 
-# Copy over package.json and pnpm-lock.yaml
 COPY package.json pnpm-lock.yaml ./
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
+# We use --no-frozen-lockfile here because you're in the middle of a version migration
+# This allows pnpm to update the lockfile inside the container if needed
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --no-frozen-lockfile
 
-# Copy the rest of the application code
-COPY . .
+# 2. Build Stage
+FROM node:25.6.1-alpine AS builder
+WORKDIR /app
+# Install pnpm here too for the build command
+RUN npm install -g pnpm@latest
+COPY --from=deps /app/node_modules ./node_modules
+COPY .. .
 
-# Build the Next.js app
+ENV NEXT_TELEMETRY_DISABLED 1
 RUN pnpm build
 
-# Step 2: Production image
-FROM node:current-alpine AS production
-
-# Set working directory
+# 3. Production Stage
+FROM node:25.6.1-alpine AS runner
 WORKDIR /app
 
-# Install pnpm globally
-RUN npm install -g pnpm
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV HOSTNAME="0.0.0.0"
+ENV PORT=3000
 
-# Copy the build output and node_modules from the previous stage
-COPY --from=base /app/node_modules ./node_modules
-COPY --from=base /app/.next ./.next
-COPY --from=base /app/package.json ./package.json
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
 
-# Expose the port the app runs on
+RUN mkdir .next && chown nextjs:nodejs .next
+
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
 EXPOSE 3000
 
-# Start the Next.js app
-CMD ["pnpm", "dev"]
+CMD ["node", "server.js"]
