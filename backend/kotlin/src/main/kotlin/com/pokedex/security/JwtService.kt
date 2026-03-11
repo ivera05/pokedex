@@ -21,27 +21,41 @@ class JwtService {
         Keys.hmacShaKeyFor(secret.toByteArray())
     }
 
-    fun generateToken(userId: Long, username: String): String {
+    fun generateToken(userId: Long, username: String, name: String, tokenVersion: Long): String {
         return Jwts.builder()
             .subject(username)
             .claim("userId", userId)
             .claim("username", username)
+            .claim("name", name)
+            .claim("tokenVersion", tokenVersion)
             .issuedAt(Date())
             .expiration(Date(System.currentTimeMillis() + expirationMs))
             .signWith(signingKey)
             .compact()
     }
 
-fun extractUserId(token: String): Long {
-    val claims = getClaimsFromToken(token)
-    return (claims["userId"] as? Number)?.toLong()
-        ?: throw IllegalArgumentException("Claim 'userId' is not a valid number")
+    fun extractUserId(token: String): Long {
+        val claims = getClaimsFromToken(token)
+        return (claims["userId"] as? Number)?.toLong()
+            ?: throw IllegalArgumentException("Claim 'userId' is not a valid number")
     }
 
     fun extractUsername(token: String): String {
         val claims = getClaimsFromToken(token)
         return (claims["username"] as? String)
             ?: throw IllegalArgumentException("Claim 'username' is not a valid")
+    }
+
+    fun extractTokenVersion(token: String): Long {
+        val claims = getClaimsFromToken(token)
+        return (claims["tokenVersion"] as? Number)?.toLong()
+            ?: throw IllegalArgumentException("Claim 'tokenVersion' is not a valid number")
+    }
+
+    fun extractName(token: String): String {
+        val claims = getClaimsFromToken(token)
+        return (claims["name"] as? String)
+            ?: throw IllegalArgumentException("Claim 'name' is not a valid")
     }
 
     /**

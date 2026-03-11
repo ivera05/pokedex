@@ -6,5 +6,10 @@ data class PageResponseDto<T> (
     val size: Int,
     val totalElements: Long,
     val totalPages: Int,
-    val sort: List<String>
+    val sort: List<String>,
+    val appliedFilters: FilterMetadata = FilterMetadata()
+)
+
+data class FilterMetadata(
+    val applied: Map<String, Any?> = emptyMap()
 )

@@ -1,16 +1,21 @@
 package com.pokedex.service
 
+import com.pokedex.entity.TrainerEntity
 import com.pokedex.entity.UserEntity
+import com.pokedex.entity.UserRole
+import com.pokedex.repository.TrainerRepository
 import com.pokedex.repository.UserRepository
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class UserService(
     private val userRepository: UserRepository,
+    private val trainerService: TrainerService,
     private val passwordEncoder: PasswordEncoder
 ) : UserDetailsService {
 
@@ -20,23 +25,47 @@ class UserService(
 
         return org.springframework.security.core.userdetails.User
             .withUsername(user.username)
-            .password(user.password) // Must be encoded in DB
+            .password(user.password)
             .authorities("USER")
             .build()
     }
 
-    fun createUser(username: String, rawPassword: String): UserEntity {
+    fun createUser(
+        username: String,
+        rawPassword: String,
+        role: UserRole? = UserRole.TRAINER,
+        name: String,
+        avatar: String? = null,
+    ): UserEntity {
         val encodedPassword = passwordEncoder.encode(rawPassword)
             ?: error("Password encoding returned null for user: $username")
         val newUser = UserEntity(
             username = username,
-            password = encodedPassword
+            password = encodedPassword,
+            roles = listOfNotNull(role),
+            name = name,
+            avatar = avatar?.takeIf { it.isNotBlank() } ?: "/images/avatar_default.svg"
         )
-        return userRepository.save(newUser)
+        val savedUser = userRepository.save(newUser)
+
+        if (role == UserRole.TRAINER) {
+            trainerService.create("Jr. Trainer", savedUser)
+        }
+
+        return savedUser
     }
 
     fun findByUsername(username: String): UserEntity {
         return userRepository.findByUsername(username)
             ?: throw UsernameNotFoundException("User not found.")
+    }
+
+    @Transactional
+    fun incrementTokenVersion(username: String): Long {
+        val user = findByUsername(username)
+        user.tokenVersion += 1
+        userRepository.save(user)
+
+        return user.tokenVersion
     }
 }

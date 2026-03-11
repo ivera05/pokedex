@@ -2,6 +2,7 @@ package com.pokedex.service
 
 import com.pokedex.dto.PageResponseDto
 import com.pokedex.dto.PokemonDto
+import com.pokedex.dto.PokemonFilter
 import com.pokedex.repository.PokemonRepository
 import com.pokedex.utils.toPageResponse
 import org.springframework.data.domain.Pageable
@@ -18,9 +19,11 @@ class PokemonService(
         return pokemon.toDto()
     }
 
-    fun getAllPokemon(pageable: Pageable): PageResponseDto<PokemonDto> {
+    fun getAllPokemon(filter: PokemonFilter, pageable: Pageable): PageResponseDto<PokemonDto> {
+        val name = filter.name?.takeIf { it.isNotBlank() }?.lowercase()
+        val type = filter.type?.takeIf { it.isNotBlank() }?.lowercase()
         return pokemonRepository
-            .findAll(pageable)
+            .findAllByFilters(name, type, pageable)
             .map { it.toDto() }
             .toPageResponse()
     }

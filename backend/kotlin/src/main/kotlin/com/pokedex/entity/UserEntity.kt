@@ -17,6 +17,15 @@ class UserEntity(
     @Column(nullable = false)
     private val password: String = "",
 
+    @Column(name = "token_version", nullable = false)
+    var tokenVersion: Long = 0,
+
+    @Column(nullable = false)
+    val name: String = "",
+
+    @Column(nullable = false)
+    val avatar: String = "",
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = [JoinColumn(name = "user_id")])
     @Enumerated(EnumType.STRING)
