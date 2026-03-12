@@ -15,7 +15,7 @@ export type EvolutionDto = {
 };
 
 export type Pokemon = {
-    id: string;
+    id: number;
     name: string;
     types: string[];
     baseHP: number;

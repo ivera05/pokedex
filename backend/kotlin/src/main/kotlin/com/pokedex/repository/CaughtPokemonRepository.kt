@@ -25,7 +25,7 @@ interface CaughtPokemonRepository : JpaRepository<CaughtPokemonEntity, Long> {
     ): Int
 
     @Query(
-        value = "SELECT cp.pokemon FROM CaughtPokemonEntity cp WHERE cp.trainer.id = :trainerId",
+        value = "SELECT cp.pokemon FROM CaughtPokemonEntity cp WHERE cp.trainer.id = :trainerId ORDER BY cp.id DESC",
     )
     fun findCaughtPokemons(
         @Param("trainerId") trainerId: Long,

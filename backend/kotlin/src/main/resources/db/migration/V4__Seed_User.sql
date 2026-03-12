@@ -24,8 +24,28 @@ INSERT INTO trainers (user_id, title, region)
 SELECT u.id, 'Professor', 'Kanto'
 FROM users u
 WHERE u.username = 'sam_oak@pokemail.com'
-  AND NOT EXISTS (
-    SELECT 1
-    FROM trainers t
-    WHERE t.user_id = u.id
-);
+  AND NOT EXISTS (SELECT 1
+                  FROM trainers t
+                  WHERE t.user_id = u.id);
+
+-- Migration to seed Professor Oak's caught Pokemon
+INSERT INTO caught_pokemons (trainer_id, pokemon_id)
+SELECT t.id, p.id
+FROM trainers t,
+     pokemons p
+WHERE t.user_id = (SELECT id FROM users WHERE username = 'sam_oak@pokemail.com')
+  AND p.name IN (
+                 'Bulbasaur',
+                 'Charmander',
+                 'Squirtle',
+                 'Arcanine',
+                 'Gyarados',
+                 'Exeggutor',
+                 'Pidgeot',
+                 'Dragonite'
+    )
+  -- Prevent duplicate entries if the migration is re-run
+  AND NOT EXISTS (SELECT 1
+                  FROM caught_pokemons cp
+                  WHERE cp.trainer_id = t.id
+                    AND cp.pokemon_id = p.id);

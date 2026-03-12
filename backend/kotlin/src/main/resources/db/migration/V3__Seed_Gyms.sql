@@ -3,258 +3,210 @@ SELECT 'brock@pokemail.com',
        '$2a$10$auRfXTQP1QDyKVcUdPLahO0rb/wJj7CKcTCs6ZtqhQMXMKvFWSoQO',
        'Brock',
        '/images/avatars/avatar-default.svg'
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM users
-    WHERE username = 'brock@pokemail.com'
-);
+WHERE NOT EXISTS (SELECT 1
+                  FROM users
+                  WHERE username = 'brock@pokemail.com');
 
 INSERT INTO users (username, password, name, avatar)
 SELECT 'misty@pokemail.com',
        '$2a$10$auRfXTQP1QDyKVcUdPLahO0rb/wJj7CKcTCs6ZtqhQMXMKvFWSoQO',
        'Misty',
        '/images/avatars/avatar-default.svg'
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM users
-    WHERE username = 'misty@pokemail.com'
-);
+WHERE NOT EXISTS (SELECT 1
+                  FROM users
+                  WHERE username = 'misty@pokemail.com');
 
 INSERT INTO users (username, password, name, avatar)
 SELECT 'lt.surge@pokemail.com',
        '$2a$10$auRfXTQP1QDyKVcUdPLahO0rb/wJj7CKcTCs6ZtqhQMXMKvFWSoQO',
        'Lt. Surge',
        '/images/avatars/avatar-default.svg'
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM users
-    WHERE username = 'lt.surge@pokemail.com'
-);
+WHERE NOT EXISTS (SELECT 1
+                  FROM users
+                  WHERE username = 'lt.surge@pokemail.com');
 
 INSERT INTO users (username, password, name, avatar)
 SELECT 'erika@pokemail.com',
        '$2a$10$auRfXTQP1QDyKVcUdPLahO0rb/wJj7CKcTCs6ZtqhQMXMKvFWSoQO',
        'Erika',
        '/images/avatars/avatar-default.svg'
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM users
-    WHERE username = 'erika@pokemail.com'
-);
+WHERE NOT EXISTS (SELECT 1
+                  FROM users
+                  WHERE username = 'erika@pokemail.com');
 
 INSERT INTO users (username, password, name, avatar)
 SELECT 'koga@pokemail.com',
        '$2a$10$auRfXTQP1QDyKVcUdPLahO0rb/wJj7CKcTCs6ZtqhQMXMKvFWSoQO',
        'Koga',
        '/images/avatars/avatar-default.svg'
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM users
-    WHERE username = 'koga@pokemail.com'
-);
+WHERE NOT EXISTS (SELECT 1
+                  FROM users
+                  WHERE username = 'koga@pokemail.com');
 
 INSERT INTO users (username, password, name, avatar)
 SELECT 'sabrina@pokemail.com',
        '$2a$10$auRfXTQP1QDyKVcUdPLahO0rb/wJj7CKcTCs6ZtqhQMXMKvFWSoQO',
        'Sabrina',
        '/images/avatars/avatar-default.svg'
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM users
-    WHERE username = 'sabrina@pokemail.com'
-);
+WHERE NOT EXISTS (SELECT 1
+                  FROM users
+                  WHERE username = 'sabrina@pokemail.com');
 
 INSERT INTO users (username, password, name, avatar)
 SELECT 'blaine@pokemail.com',
        '$2a$10$auRfXTQP1QDyKVcUdPLahO0rb/wJj7CKcTCs6ZtqhQMXMKvFWSoQO',
        'Blaine',
        '/images/avatars/avatar-default.svg'
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM users
-    WHERE username = 'blaine@pokemail.com'
-);
+WHERE NOT EXISTS (SELECT 1
+                  FROM users
+                  WHERE username = 'blaine@pokemail.com');
 
 INSERT INTO users (username, password, name, avatar)
 SELECT 'giovanni@pokemail.com',
        '$2a$10$auRfXTQP1QDyKVcUdPLahO0rb/wJj7CKcTCs6ZtqhQMXMKvFWSoQO',
        'Giovanni',
        '/images/avatars/avatar-default.svg'
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM users
-    WHERE username = 'giovanni@pokemail.com'
-);
+WHERE NOT EXISTS (SELECT 1
+                  FROM users
+                  WHERE username = 'giovanni@pokemail.com');
 
 -- TRAINER role for each leader
 INSERT INTO user_roles (user_id, role)
 SELECT u.id, 'TRAINER'
 FROM users u
 WHERE u.username = 'brock@pokemail.com'
-  AND NOT EXISTS (
-    SELECT 1
-    FROM user_roles ur
-    WHERE ur.user_id = u.id
-      AND ur.role = 'TRAINER'
-);
+  AND NOT EXISTS (SELECT 1
+                  FROM user_roles ur
+                  WHERE ur.user_id = u.id
+                    AND ur.role = 'TRAINER');
 
 INSERT INTO user_roles (user_id, role)
 SELECT u.id, 'TRAINER'
 FROM users u
 WHERE u.username = 'misty@pokemail.com'
-  AND NOT EXISTS (
-    SELECT 1
-    FROM user_roles ur
-    WHERE ur.user_id = u.id
-      AND ur.role = 'TRAINER'
-);
+  AND NOT EXISTS (SELECT 1
+                  FROM user_roles ur
+                  WHERE ur.user_id = u.id
+                    AND ur.role = 'TRAINER');
 
 INSERT INTO user_roles (user_id, role)
 SELECT u.id, 'TRAINER'
 FROM users u
 WHERE u.username = 'lt.surge@pokemail.com'
-  AND NOT EXISTS (
-    SELECT 1
-    FROM user_roles ur
-    WHERE ur.user_id = u.id
-      AND ur.role = 'TRAINER'
-);
+  AND NOT EXISTS (SELECT 1
+                  FROM user_roles ur
+                  WHERE ur.user_id = u.id
+                    AND ur.role = 'TRAINER');
 
 INSERT INTO user_roles (user_id, role)
 SELECT u.id, 'TRAINER'
 FROM users u
 WHERE u.username = 'erika@pokemail.com'
-  AND NOT EXISTS (
-    SELECT 1
-    FROM user_roles ur
-    WHERE ur.user_id = u.id
-      AND ur.role = 'TRAINER'
-);
+  AND NOT EXISTS (SELECT 1
+                  FROM user_roles ur
+                  WHERE ur.user_id = u.id
+                    AND ur.role = 'TRAINER');
 
 INSERT INTO user_roles (user_id, role)
 SELECT u.id, 'TRAINER'
 FROM users u
 WHERE u.username = 'koga@pokemail.com'
-  AND NOT EXISTS (
-    SELECT 1
-    FROM user_roles ur
-    WHERE ur.user_id = u.id
-      AND ur.role = 'TRAINER'
-);
+  AND NOT EXISTS (SELECT 1
+                  FROM user_roles ur
+                  WHERE ur.user_id = u.id
+                    AND ur.role = 'TRAINER');
 
 INSERT INTO user_roles (user_id, role)
 SELECT u.id, 'TRAINER'
 FROM users u
 WHERE u.username = 'sabrina@pokemail.com'
-  AND NOT EXISTS (
-    SELECT 1
-    FROM user_roles ur
-    WHERE ur.user_id = u.id
-      AND ur.role = 'TRAINER'
-);
+  AND NOT EXISTS (SELECT 1
+                  FROM user_roles ur
+                  WHERE ur.user_id = u.id
+                    AND ur.role = 'TRAINER');
 
 INSERT INTO user_roles (user_id, role)
 SELECT u.id, 'TRAINER'
 FROM users u
 WHERE u.username = 'blaine@pokemail.com'
-  AND NOT EXISTS (
-    SELECT 1
-    FROM user_roles ur
-    WHERE ur.user_id = u.id
-      AND ur.role = 'TRAINER'
-);
+  AND NOT EXISTS (SELECT 1
+                  FROM user_roles ur
+                  WHERE ur.user_id = u.id
+                    AND ur.role = 'TRAINER');
 
 INSERT INTO user_roles (user_id, role)
 SELECT u.id, 'TRAINER'
 FROM users u
 WHERE u.username = 'giovanni@pokemail.com'
-  AND NOT EXISTS (
-    SELECT 1
-    FROM user_roles ur
-    WHERE ur.user_id = u.id
-      AND ur.role = 'TRAINER'
-);
+  AND NOT EXISTS (SELECT 1
+                  FROM user_roles ur
+                  WHERE ur.user_id = u.id
+                    AND ur.role = 'TRAINER');
 
 -- Trainers
 INSERT INTO trainers (user_id, title, region)
 SELECT u.id, 'Gym Leader', 'Kanto'
 FROM users u
 WHERE u.username = 'brock@pokemail.com'
-  AND NOT EXISTS (
-    SELECT 1
-    FROM trainers t
-    WHERE t.user_id = u.id
-);
+  AND NOT EXISTS (SELECT 1
+                  FROM trainers t
+                  WHERE t.user_id = u.id);
 
 INSERT INTO trainers (user_id, title, region)
 SELECT u.id, 'Gym Leader', 'Kanto'
 FROM users u
 WHERE u.username = 'misty@pokemail.com'
-  AND NOT EXISTS (
-    SELECT 1
-    FROM trainers t
-    WHERE t.user_id = u.id
-);
+  AND NOT EXISTS (SELECT 1
+                  FROM trainers t
+                  WHERE t.user_id = u.id);
 
 INSERT INTO trainers (user_id, title, region)
 SELECT u.id, 'Gym Leader', 'Kanto'
 FROM users u
 WHERE u.username = 'lt.surge@pokemail.com'
-  AND NOT EXISTS (
-    SELECT 1
-    FROM trainers t
-    WHERE t.user_id = u.id
-);
+  AND NOT EXISTS (SELECT 1
+                  FROM trainers t
+                  WHERE t.user_id = u.id);
 
 INSERT INTO trainers (user_id, title, region)
 SELECT u.id, 'Gym Leader', 'Kanto'
 FROM users u
 WHERE u.username = 'erika@pokemail.com'
-  AND NOT EXISTS (
-    SELECT 1
-    FROM trainers t
-    WHERE t.user_id = u.id
-);
+  AND NOT EXISTS (SELECT 1
+                  FROM trainers t
+                  WHERE t.user_id = u.id);
 
 INSERT INTO trainers (user_id, title, region)
 SELECT u.id, 'Gym Leader', 'Kanto'
 FROM users u
 WHERE u.username = 'koga@pokemail.com'
-  AND NOT EXISTS (
-    SELECT 1
-    FROM trainers t
-    WHERE t.user_id = u.id
-);
+  AND NOT EXISTS (SELECT 1
+                  FROM trainers t
+                  WHERE t.user_id = u.id);
 
 INSERT INTO trainers (user_id, title, region)
 SELECT u.id, 'Gym Leader', 'Kanto'
 FROM users u
 WHERE u.username = 'sabrina@pokemail.com'
-  AND NOT EXISTS (
-    SELECT 1
-    FROM trainers t
-    WHERE t.user_id = u.id
-);
+  AND NOT EXISTS (SELECT 1
+                  FROM trainers t
+                  WHERE t.user_id = u.id);
 
 INSERT INTO trainers (user_id, title, region)
 SELECT u.id, 'Gym Leader', 'Kanto'
 FROM users u
 WHERE u.username = 'blaine@pokemail.com'
-  AND NOT EXISTS (
-    SELECT 1
-    FROM trainers t
-    WHERE t.user_id = u.id
-);
+  AND NOT EXISTS (SELECT 1
+                  FROM trainers t
+                  WHERE t.user_id = u.id);
 
 INSERT INTO trainers (user_id, title, region)
 SELECT u.id, 'Gym Leader', 'Kanto'
 FROM users u
 WHERE u.username = 'giovanni@pokemail.com'
-  AND NOT EXISTS (
-    SELECT 1
-    FROM trainers t
-    WHERE t.user_id = u.id
-);
+  AND NOT EXISTS (SELECT 1
+                  FROM trainers t
+                  WHERE t.user_id = u.id);
 
 -- Gyms from the Indigo League / Kanto circuit
 INSERT INTO gyms (trainer_id, league, region, city, badge, image)
@@ -262,85 +214,90 @@ SELECT t.id, 'Indigo', 'Kanto', 'Pewter City', 'Boulder Badge', '/images/badges/
 FROM trainers t
      JOIN users u ON u.id = t.user_id
 WHERE u.username = 'brock@pokemail.com'
-  AND NOT EXISTS (
-    SELECT 1
-    FROM gyms g
-    WHERE g.city = 'Pewter City'
-);
+  AND NOT EXISTS (SELECT 1
+                  FROM gyms g
+                  WHERE g.city = 'Pewter City');
 
 INSERT INTO gyms (trainer_id, league, region, city, badge, image)
 SELECT t.id, 'Indigo', 'Kanto', 'Cerulean City', 'Cascade Badge', '/images/badges/Cascade_Badge.png'
 FROM trainers t
      JOIN users u ON u.id = t.user_id
 WHERE u.username = 'misty@pokemail.com'
-  AND NOT EXISTS (
-    SELECT 1
-    FROM gyms g
-    WHERE g.city = 'Cerulean City'
-);
+  AND NOT EXISTS (SELECT 1
+                  FROM gyms g
+                  WHERE g.city = 'Cerulean City');
 
 INSERT INTO gyms (trainer_id, league, region, city, badge, image)
 SELECT t.id, 'Indigo', 'Kanto', 'Vermilion City', 'Thunder Badge', '/images/badges/Thunder_Badge.png'
 FROM trainers t
      JOIN users u ON u.id = t.user_id
 WHERE u.username = 'lt.surge@pokemail.com'
-  AND NOT EXISTS (
-    SELECT 1
-    FROM gyms g
-    WHERE g.city = 'Vermilion City'
-);
+  AND NOT EXISTS (SELECT 1
+                  FROM gyms g
+                  WHERE g.city = 'Vermilion City');
 
 INSERT INTO gyms (trainer_id, league, region, city, badge, image)
 SELECT t.id, 'Indigo', 'Kanto', 'Celadon City', 'Rainbow Badge', '/images/badges/Rainbow_Badge.png'
 FROM trainers t
      JOIN users u ON u.id = t.user_id
 WHERE u.username = 'erika@pokemail.com'
-  AND NOT EXISTS (
-    SELECT 1
-    FROM gyms g
-    WHERE g.city = 'Celadon City'
-);
+  AND NOT EXISTS (SELECT 1
+                  FROM gyms g
+                  WHERE g.city = 'Celadon City');
 
 INSERT INTO gyms (trainer_id, league, region, city, badge, image)
 SELECT t.id, 'Indigo', 'Kanto', 'Fuchsia City', 'Soul Badge', '/images/badges/Soul_Badge.png'
 FROM trainers t
      JOIN users u ON u.id = t.user_id
 WHERE u.username = 'koga@pokemail.com'
-  AND NOT EXISTS (
-    SELECT 1
-    FROM gyms g
-    WHERE g.city = 'Fuchsia City'
-);
+  AND NOT EXISTS (SELECT 1
+                  FROM gyms g
+                  WHERE g.city = 'Fuchsia City');
 
 INSERT INTO gyms (trainer_id, league, region, city, badge, image)
 SELECT t.id, 'Indigo', 'Kanto', 'Saffron City', 'Marsh Badge', '/images/badges/Marsh_Badge.png'
 FROM trainers t
      JOIN users u ON u.id = t.user_id
 WHERE u.username = 'sabrina@pokemail.com'
-  AND NOT EXISTS (
-    SELECT 1
-    FROM gyms g
-    WHERE g.city = 'Saffron City'
-);
+  AND NOT EXISTS (SELECT 1
+                  FROM gyms g
+                  WHERE g.city = 'Saffron City');
 
 INSERT INTO gyms (trainer_id, league, region, city, badge, image)
 SELECT t.id, 'Indigo', 'Kanto', 'Cinnabar Island', 'Volcano Badge', '/images/badges/Volcano_Badge.png'
 FROM trainers t
      JOIN users u ON u.id = t.user_id
 WHERE u.username = 'blaine@pokemail.com'
-  AND NOT EXISTS (
-    SELECT 1
-    FROM gyms g
-    WHERE g.city = 'Cinnabar Island'
-);
+  AND NOT EXISTS (SELECT 1
+                  FROM gyms g
+                  WHERE g.city = 'Cinnabar Island');
 
 INSERT INTO gyms (trainer_id, league, region, city, badge, image)
 SELECT t.id, 'Indigo', 'Kanto', 'Viridian City', 'Earth Badge', '/images/badges/Earth_Badge.png'
 FROM trainers t
      JOIN users u ON u.id = t.user_id
 WHERE u.username = 'giovanni@pokemail.com'
-  AND NOT EXISTS (
-    SELECT 1
-    FROM gyms g
-    WHERE g.city = 'Viridian City'
-);
+  AND NOT EXISTS (SELECT 1
+                  FROM gyms g
+                  WHERE g.city = 'Viridian City');
+
+-- Add pokemons to gym leaers
+INSERT INTO caught_pokemons (trainer_id, pokemon_id)
+SELECT t.id, p.id
+FROM trainers t
+     JOIN users u ON t.user_id = u.id
+     CROSS JOIN pokemons p
+WHERE (
+    (u.username = 'brock@pokemail.com' AND p.name IN ('Geodude', 'Onix')) OR
+    (u.username = 'misty@pokemail.com' AND p.name IN ('Staryu', 'Starmie')) OR
+    (u.username = 'lt.surge@pokemail.com' AND p.name IN ('Voltorb', 'Pikachu', 'Raichu')) OR
+    (u.username = 'erika@pokemail.com' AND p.name IN ('Victreebel', 'Tangela', 'Vileplume')) OR
+    (u.username = 'koga@pokemail.com' AND p.name IN ('Koffing', 'Muk', 'Weezing')) OR
+    (u.username = 'sabrina@pokemail.com' AND p.name IN ('Kadabra', 'Mr. Mime', 'Venomoth', 'Alakazam')) OR
+    (u.username = 'blaine@pokemail.com' AND p.name IN ('Growlithe', 'Ponyta', 'Rapidash', 'Arcanine')) OR
+    (u.username = 'giovanni@pokemail.com' AND p.name IN ('Rhyhorn', 'Dugtrio', 'Nidoqueen', 'Nidoking', 'Rhydon'))
+    )
+  AND NOT EXISTS (SELECT 1
+                  FROM caught_pokemons cp
+                  WHERE cp.trainer_id = t.id
+                    AND cp.pokemon_id = p.id);

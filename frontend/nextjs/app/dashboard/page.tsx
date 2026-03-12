@@ -4,6 +4,7 @@ import {useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
 import {apiGetTrainer, apiGetTrainerPokemons} from "@/app/lib/api";
 import {Pokemon, Trainer} from "@/app/lib/types";
+import PokemonCard from "@/app/components/PokemonCard";
 
 function Card({
                   title,
@@ -46,9 +47,6 @@ export default function DashboardPage() {
             }
         })();
     }, [router]);
-
-    const caughtPreview = caught;
-
     return (
         <div className="space-y-6">
             <header className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
@@ -124,7 +122,7 @@ export default function DashboardPage() {
                     <div>
                         <div className="text-sm font-semibold">Recently caught</div>
                         <div className="text-xs text-zinc-500">
-                            Showing up to {caughtPreview.length} Pokémon
+                            Showing up to {caught.length} Pokémon
                         </div>
                     </div>
                     <button
@@ -143,22 +141,17 @@ export default function DashboardPage() {
                                 className="h-16 rounded-2xl bg-zinc-50 ring-1 ring-zinc-100"
                             />
                         ))
-                    ) : caughtPreview.length === 0 ? (
+                    ) : caught.length === 0 ? (
                         <div className="text-sm text-zinc-600">
                             No caught Pokémon yet. Add your first one!
                         </div>
                     ) : (
-                        caughtPreview.map((p) => (
+                        caught.map((pokemon) => (
                             <div
-                                key={p.id}
-                                className="flex items-center justify-between rounded-2xl border border-zinc-200 bg-white px-4 py-4"
+                                key={pokemon.id}
+                                className="cursor-pointer transition-transform hover:scale-[1.02]"
                             >
-                                <div className="min-w-0">
-                                    <div className="truncate text-sm font-semibold">{p.name}</div>
-                                    <div className="text-xs text-zinc-500">
-                                        #{String(p.id).padStart(3, "0")} • {p.types[0]}
-                                    </div>
-                                </div>
+                                <PokemonCard pokemon={pokemon}/>
                             </div>
                         ))
                     )}
