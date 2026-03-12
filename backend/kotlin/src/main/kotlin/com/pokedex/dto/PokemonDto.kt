@@ -23,5 +23,5 @@ data class PokemonDto(
 data class EvolutionDto(
     val id: Long,
     val name: String,
-    val trigger: String
+    val trigger: String,
 )

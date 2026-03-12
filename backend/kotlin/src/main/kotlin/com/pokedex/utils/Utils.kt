@@ -10,5 +10,5 @@ fun <T : Any> Page<T>.toPageResponse(): PageResponseDto<T> =
         size = size,
         totalElements = totalElements,
         totalPages = totalPages,
-        sort = sort.map { "${it.property},${it.direction.name.lowercase()}" }.toList()
+        sort = sort.map { "${it.property},${it.direction.name.lowercase()}" }.toList(),
     )

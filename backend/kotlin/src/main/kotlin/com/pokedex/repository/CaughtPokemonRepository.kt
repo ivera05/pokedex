@@ -12,18 +12,23 @@ import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
 @Repository
-interface CaughtPokemonRepository: JpaRepository<CaughtPokemonEntity, Long> {
-
+interface CaughtPokemonRepository : JpaRepository<CaughtPokemonEntity, Long> {
     @Modifying
     @Transactional
     @Query(
         value = "INSERT INTO caught_pokemons (trainer_id, pokemon_id) VALUES (:trainerId, :pokemonId)",
-        nativeQuery = true
+        nativeQuery = true,
     )
-    fun catchPokemon(@Param("trainerId") trainerId: Long, @Param("pokemonId") pokemonId: Long): Int
+    fun catchPokemon(
+        @Param("trainerId") trainerId: Long,
+        @Param("pokemonId") pokemonId: Long,
+    ): Int
 
     @Query(
-        value = "SELECT cp.pokemon FROM CaughtPokemonEntity cp WHERE cp.trainer.id = :trainerId"
+        value = "SELECT cp.pokemon FROM CaughtPokemonEntity cp WHERE cp.trainer.id = :trainerId",
     )
-    fun findCaughtPokemons(@Param("trainerId") trainerId: Long, pageable: Pageable): Page<PokemonEntity>
+    fun findCaughtPokemons(
+        @Param("trainerId") trainerId: Long,
+        pageable: Pageable,
+    ): Page<PokemonEntity>
 }
