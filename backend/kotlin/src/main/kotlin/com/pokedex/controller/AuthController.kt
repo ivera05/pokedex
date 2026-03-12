@@ -13,7 +13,10 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/auth")
@@ -22,34 +25,39 @@ class AuthController(
     private val authenticationManager: AuthenticationManager,
     private val jwtService: JwtService,
     private val userService: UserService,
-    private val passwordEncoder: PasswordEncoder
+    private val passwordEncoder: PasswordEncoder,
 ) {
     private val logger: Logger = LoggerFactory.getLogger(AuthController::class.java)
 
     @PostMapping("/register")
     @Operation(summary = "Register a new user", description = "Create a new user account.")
-    fun register(@RequestBody request: RegisterRequest): String {
+    fun register(
+        @RequestBody request: RegisterRequest,
+    ): String {
         userService.createUser(
             request.username,
             request.password,
             request.role,
             request.name,
-            request.avatar
+            request.avatar,
         )
         return "User registered successfully!"
     }
 
     @PostMapping("/login")
     @Operation(summary = "Authenticate a user", description = "Authenticate a user and generate a JWT token.")
-    fun login(@RequestBody request: LoginRequest): AuthResponse {
+    fun login(
+        @RequestBody request: LoginRequest,
+    ): AuthResponse {
         authenticationManager.authenticate(
-            UsernamePasswordAuthenticationToken(request.username, request.password)
+            UsernamePasswordAuthenticationToken(request.username, request.password),
         )
 
         val user = userService.findByUsername(request.username)
         logger.debug(
-            "Password matches for username='{}': {}", request.username,
-            passwordEncoder.matches(request.password, user.password)
+            "Password matches for username='{}': {}",
+            request.username,
+            passwordEncoder.matches(request.password, user.password),
         )
 
         val token = jwtService.generateToken(user.id, request.username, user.name, user.tokenVersion)
@@ -59,11 +67,12 @@ class AuthController(
     @PostMapping("/logout")
     @Operation(
         summary = "Logout everywhere",
-        description = "Invalidate all JWTs by incrementing the user's token version."
+        description = "Invalidate all JWTs by incrementing the user's token version.",
     )
     fun logout(): String {
-        val username = SecurityContextHolder.getContext().authentication?.name
-            ?: return "Not authenticated"
+        val username =
+            SecurityContextHolder.getContext().authentication?.name
+                ?: return "Not authenticated"
 
         userService.incrementTokenVersion(username)
         return "User logged out successfully!"

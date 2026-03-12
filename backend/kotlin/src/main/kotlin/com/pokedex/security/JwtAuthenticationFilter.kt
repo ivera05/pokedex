@@ -4,12 +4,11 @@ import com.pokedex.service.UserService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
-
 
 @Component
 class JwtAuthenticationFilter(
@@ -19,7 +18,7 @@ class JwtAuthenticationFilter(
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
-        filterChain: FilterChain
+        filterChain: FilterChain,
     ) {
         val token = getTokenFromRequest(request)
         if (!token.isNullOrEmpty() && jwtService.validateToken(token)) {
@@ -29,11 +28,12 @@ class JwtAuthenticationFilter(
             val user = userService.findByUsername(username)
 
             if (user.tokenVersion == tokenVersion) {
-                val authentication = UsernamePasswordAuthenticationToken(
-                    user,
-                    null,
-                    user.authorities
-                )
+                val authentication =
+                    UsernamePasswordAuthenticationToken(
+                        user,
+                        null,
+                        user.authorities,
+                    )
                 authentication.details = WebAuthenticationDetailsSource().buildDetails(request)
                 SecurityContextHolder.getContext().authentication = authentication
             }
@@ -46,6 +46,8 @@ class JwtAuthenticationFilter(
         val bearerToken = request.getHeader("Authorization")
         return if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             bearerToken.substring(7)
-        } else null
+        } else {
+            null
+        }
     }
 }

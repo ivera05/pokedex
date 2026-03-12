@@ -10,16 +10,21 @@ import org.springframework.stereotype.Service
 
 @Service
 class PokemonService(
-    private val pokemonRepository: PokemonRepository
+    private val pokemonRepository: PokemonRepository,
 ) {
     fun getPokemonById(id: Int): PokemonDto? {
-        val pokemon = pokemonRepository.findById(id.toLong())
-            .orElseThrow { IllegalArgumentException("Pokemon with ID $id not found") }
+        val pokemon =
+            pokemonRepository
+                .findById(id.toLong())
+                .orElseThrow { IllegalArgumentException("Pokemon with ID $id not found") }
 
         return pokemon.toDto()
     }
 
-    fun getAllPokemon(filter: PokemonFilter, pageable: Pageable): PageResponseDto<PokemonDto> {
+    fun getAllPokemon(
+        filter: PokemonFilter,
+        pageable: Pageable,
+    ): PageResponseDto<PokemonDto> {
         val name = filter.name?.takeIf { it.isNotBlank() }?.lowercase()
         val type = filter.type?.takeIf { it.isNotBlank() }?.lowercase()
         return pokemonRepository
@@ -28,10 +33,12 @@ class PokemonService(
             .toPageResponse()
     }
 
-    fun getPokemonByType(type: String, pageable: Pageable): PageResponseDto<PokemonDto> {
-        return pokemonRepository
+    fun getPokemonByType(
+        type: String,
+        pageable: Pageable,
+    ): PageResponseDto<PokemonDto> =
+        pokemonRepository
             .findAllByType(type, pageable)
             .map { it.toDto() }
             .toPageResponse()
-    }
 }

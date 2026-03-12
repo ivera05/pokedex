@@ -12,9 +12,12 @@ import org.springframework.stereotype.Repository
 interface PokemonRepository : JpaRepository<PokemonEntity, Long> {
     @Query(
         "SELECT p FROM PokemonEntity p JOIN p.types t WHERE t = :type",
-        countQuery = "SELECT COUNT(DISTINCT p) FROM PokemonEntity p JOIN p.types t WHERE t = :type"
+        countQuery = "SELECT COUNT(DISTINCT p) FROM PokemonEntity p JOIN p.types t WHERE t = :type",
     )
-    fun findAllByType(@Param("type") type: String, pageable: Pageable): Page<PokemonEntity>
+    fun findAllByType(
+        @Param("type") type: String,
+        pageable: Pageable,
+    ): Page<PokemonEntity>
 
     @Query(
         """
@@ -31,11 +34,11 @@ interface PokemonRepository : JpaRepository<PokemonEntity, Long> {
     LEFT JOIN p.types t
     WHERE (CAST(:name AS string) IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', CAST(:name AS string), '%')))
       AND (CAST(:type AS string) IS NULL OR LOWER(t) = LOWER(CAST(:type AS string)))
-    """
+    """,
     )
     fun findAllByFilters(
         @Param("name") name: String?,
         @Param("type") type: String?,
-        pageable: Pageable
+        pageable: Pageable,
     ): Page<PokemonEntity>
 }

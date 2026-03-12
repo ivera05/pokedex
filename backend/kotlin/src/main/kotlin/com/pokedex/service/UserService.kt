@@ -1,9 +1,7 @@
 package com.pokedex.service
 
-import com.pokedex.entity.TrainerEntity
 import com.pokedex.entity.UserEntity
 import com.pokedex.entity.UserRole
-import com.pokedex.repository.TrainerRepository
 import com.pokedex.repository.UserRepository
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
@@ -16,12 +14,12 @@ import org.springframework.transaction.annotation.Transactional
 class UserService(
     private val userRepository: UserRepository,
     private val trainerService: TrainerService,
-    private val passwordEncoder: PasswordEncoder
+    private val passwordEncoder: PasswordEncoder,
 ) : UserDetailsService {
-
     override fun loadUserByUsername(username: String): UserDetails {
-        val user = userRepository.findByUsername(username)
-            ?: throw UsernameNotFoundException("User not found")
+        val user =
+            userRepository.findByUsername(username)
+                ?: throw UsernameNotFoundException("User not found")
 
         return org.springframework.security.core.userdetails.User
             .withUsername(user.username)
@@ -37,15 +35,17 @@ class UserService(
         name: String,
         avatar: String? = null,
     ): UserEntity {
-        val encodedPassword = passwordEncoder.encode(rawPassword)
-            ?: error("Password encoding returned null for user: $username")
-        val newUser = UserEntity(
-            username = username,
-            password = encodedPassword,
-            roles = listOfNotNull(role),
-            name = name,
-            avatar = avatar?.takeIf { it.isNotBlank() } ?: "/images/avatar_default.svg"
-        )
+        val encodedPassword =
+            passwordEncoder.encode(rawPassword)
+                ?: error("Password encoding returned null for user: $username")
+        val newUser =
+            UserEntity(
+                username = username,
+                password = encodedPassword,
+                roles = listOfNotNull(role),
+                name = name,
+                avatar = avatar?.takeIf { it.isNotBlank() } ?: "/images/avatar_default.svg",
+            )
         val savedUser = userRepository.save(newUser)
 
         if (role == UserRole.TRAINER) {
@@ -55,10 +55,9 @@ class UserService(
         return savedUser
     }
 
-    fun findByUsername(username: String): UserEntity {
-        return userRepository.findByUsername(username)
+    fun findByUsername(username: String): UserEntity =
+        userRepository.findByUsername(username)
             ?: throw UsernameNotFoundException("User not found.")
-    }
 
     @Transactional
     fun incrementTokenVersion(username: String): Long {

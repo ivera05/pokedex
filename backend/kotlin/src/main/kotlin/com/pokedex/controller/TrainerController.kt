@@ -20,8 +20,9 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/trainer")
 @Tag(name = "Trainer", description = "Operations related to the Trainer")
-class TrainerController( private val trainerService: TrainerService) {
-
+class TrainerController(
+    private val trainerService: TrainerService,
+) {
     @GetMapping("/")
     @Operation(summary = "Get Trainer Information", description = "Retrieve information about the authenticated trainer.")
     fun getTrainerInfo(): ResponseEntity<TrainerDto> {
@@ -32,7 +33,9 @@ class TrainerController( private val trainerService: TrainerService) {
 
     @PostMapping("/catch/{pokemonId}")
     @Operation(summary = "Catch a Pokemon", description = "Catch a Pokemon by its ID.")
-    fun catchPokemon(@PathVariable pokemonId: Long): ResponseEntity<String> {
+    fun catchPokemon(
+        @PathVariable pokemonId: Long,
+    ): ResponseEntity<String> {
         val user = SecurityContextHolder.getContext().authentication?.principal as UserEntity
         trainerService.catchPokemon(user.id, pokemonId)
         return ResponseEntity.ok("Pokemon caught successfully")
@@ -41,7 +44,7 @@ class TrainerController( private val trainerService: TrainerService) {
     @GetMapping("/pokemons")
     @Operation(summary = "Get Caught Pokemons", description = "Retrieve a list of caught Pokemons.")
     fun getCaughtPokemons(
-        @PageableDefault(size = 20) pageable: Pageable
+        @PageableDefault(size = 20) pageable: Pageable,
     ): ResponseEntity<PageResponseDto<PokemonDto>> {
         val user = SecurityContextHolder.getContext().authentication?.principal as UserEntity
         val caughtPokemons = trainerService.getCaughtPokemons(user.id, pageable)

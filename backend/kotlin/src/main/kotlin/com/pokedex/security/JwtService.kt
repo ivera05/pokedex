@@ -5,12 +5,11 @@ import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import java.util.Date
+import java.util.*
 import javax.crypto.SecretKey
 
 @Service
 class JwtService {
-
     @Value("\${app.jwt.secret}")
     private lateinit var secret: String
 
@@ -21,8 +20,14 @@ class JwtService {
         Keys.hmacShaKeyFor(secret.toByteArray())
     }
 
-    fun generateToken(userId: Long, username: String, name: String, tokenVersion: Long): String {
-        return Jwts.builder()
+    fun generateToken(
+        userId: Long,
+        username: String,
+        name: String,
+        tokenVersion: Long,
+    ): String =
+        Jwts
+            .builder()
             .subject(username)
             .claim("userId", userId)
             .claim("username", username)
@@ -32,7 +37,6 @@ class JwtService {
             .expiration(Date(System.currentTimeMillis() + expirationMs))
             .signWith(signingKey)
             .compact()
-    }
 
     fun extractUserId(token: String): Long {
         val claims = getClaimsFromToken(token)
@@ -61,30 +65,27 @@ class JwtService {
     /**
      * Validate the token for expiration and signature.
      */
-    fun validateToken(token: String): Boolean {
-        return try {
+    fun validateToken(token: String): Boolean =
+        try {
             val claims = getClaimsFromToken(token) // Validates the token's signature internally
             !isTokenExpired(claims)
         } catch (ex: Exception) {
             false // Token is invalid
         }
-    }
 
     /**
      * Check if the token is expired.
      */
-    private fun isTokenExpired(claims: Claims): Boolean {
-        return claims.expiration.before(Date())
-    }
+    private fun isTokenExpired(claims: Claims): Boolean = claims.expiration.before(Date())
 
     /**
      * Extract the claims from the token.
      */
-    private fun getClaimsFromToken(token: String): Claims {
-        return Jwts.parser()
+    private fun getClaimsFromToken(token: String): Claims =
+        Jwts
+            .parser()
             .verifyWith(signingKey)
             .build()
             .parseSignedClaims(token)
             .payload
-    }
 }

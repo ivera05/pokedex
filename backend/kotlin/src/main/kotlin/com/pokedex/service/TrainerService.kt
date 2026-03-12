@@ -14,27 +14,30 @@ import org.springframework.stereotype.Service
 @Service
 class TrainerService(
     private val caughtPokemonRepository: CaughtPokemonRepository,
-    private val trainerRepository: TrainerRepository
+    private val trainerRepository: TrainerRepository,
 ) {
+    @Transactional
+    fun create(
+        title: String,
+        user: UserEntity,
+    ): TrainerEntity = trainerRepository.save(TrainerEntity(user = user, title = title))
+
+    fun findByUserId(userId: Long): TrainerEntity? = trainerRepository.findByUserId(userId)
 
     @Transactional
-    fun create(title: String, user: UserEntity): TrainerEntity {
-        return trainerRepository.save(TrainerEntity(user = user, title = title))
-    }
-
-    fun findByUserId(userId: Long): TrainerEntity? {
-        return trainerRepository.findByUserId(userId)
-    }
-
-    @Transactional
-    fun catchPokemon(trainerId: Long, pokemonId: Long) {
+    fun catchPokemon(
+        trainerId: Long,
+        pokemonId: Long,
+    ) {
         caughtPokemonRepository.catchPokemon(trainerId, pokemonId)
     }
 
-    fun getCaughtPokemons(trainerId: Long, pageable: Pageable): PageResponseDto<PokemonDto> {
-        return caughtPokemonRepository
+    fun getCaughtPokemons(
+        trainerId: Long,
+        pageable: Pageable,
+    ): PageResponseDto<PokemonDto> =
+        caughtPokemonRepository
             .findCaughtPokemons(trainerId, pageable)
             .map { it.toDto() }
             .toPageResponse()
-    }
 }

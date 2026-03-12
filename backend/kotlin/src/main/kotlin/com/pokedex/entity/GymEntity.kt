@@ -16,24 +16,17 @@ class GymEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trainer_id")
     val leader: TrainerEntity? = null,
-
     @Column(nullable = false)
     val league: String,
-
     @Column(nullable = false)
     val region: String,
-
     @Column(nullable = false)
     val city: String,
-
     @Column(nullable = false)
     val badge: String,
-
     @Column(nullable = false)
     val image: String,
-) {
-}
+)

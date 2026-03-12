@@ -17,23 +17,21 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @Configuration
 @EnableWebSecurity
 class SecurityConfig(
-    private val jwtAuthenticationFilter: JwtAuthenticationFilter
+    private val jwtAuthenticationFilter: JwtAuthenticationFilter,
 ) {
-
     @Bean
-    fun authenticationManager(authConfig: AuthenticationConfiguration): AuthenticationManager {
-        return authConfig.authenticationManager
-    }
+    fun authenticationManager(authConfig: AuthenticationConfiguration): AuthenticationManager = authConfig.authenticationManager
 
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
-        val config = CorsConfiguration().apply {
-            allowedOrigins = listOf("http://localhost:3000")
-            allowedMethods = listOf("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
-            allowedHeaders = listOf("Authorization", "Content-Type")
-            exposedHeaders = listOf("Authorization")
-            allowCredentials = true
-        }
+        val config =
+            CorsConfiguration().apply {
+                allowedOrigins = listOf("http://localhost:3000")
+                allowedMethods = listOf("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
+                allowedHeaders = listOf("Authorization", "Content-Type")
+                exposedHeaders = listOf("Authorization")
+                allowCredentials = true
+            }
 
         return UrlBasedCorsConfigurationSource().apply {
             registerCorsConfiguration("/**", config)
@@ -48,12 +46,13 @@ class SecurityConfig(
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests { auth ->
                 auth.requestMatchers("/api/auth/**").permitAll()
-                auth.requestMatchers(
-                    "/v3/api-docs",
-                    "/v3/api-docs/**",
-                    "/swagger-ui.html",
-                    "/swagger-ui/**"
-                ).permitAll()
+                auth
+                    .requestMatchers(
+                        "/v3/api-docs",
+                        "/v3/api-docs/**",
+                        "/swagger-ui.html",
+                        "/swagger-ui/**",
+                    ).permitAll()
                 auth.anyRequest().authenticated()
             }
             // Add the filter

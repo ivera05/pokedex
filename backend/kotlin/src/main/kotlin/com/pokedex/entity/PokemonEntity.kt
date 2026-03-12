@@ -16,60 +16,44 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "pokemons")
-class PokemonEntity (
+class PokemonEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
-
     @Column(nullable = false)
     val name: String,
-
     @ElementCollection
     @CollectionTable(name = "pokemon_types", joinColumns = [JoinColumn(name = "pokemon_id")])
     @Column(name = "type")
     val types: List<String>,
-
-    @Column( name = "base_hp", nullable = false)
+    @Column(name = "base_hp", nullable = false)
     val baseHP: Int,
-
     @Column(nullable = false)
     val baseAttack: Int,
-
     @Column(nullable = false)
     val baseDefense: Int,
-
     @Column(nullable = false)
     val baseSpecialAttack: Int,
-
     @Column(nullable = false)
     val baseSpecialDefense: Int,
-
     @Column(nullable = false)
     val baseSpeed: Int,
-
     @Column(nullable = false)
     val species: String,
-
     @Column(columnDefinition = "TEXT")
     val description: String,
-
     @Column(nullable = false)
     val height: Float,
-
     @Column(nullable = false)
     val weight: Float,
-
     @ElementCollection
     @CollectionTable(name = "pokemon_abilities", joinColumns = [JoinColumn(name = "pokemon_id")])
     @Column(name = "ability")
     val abilities: List<String>,
-
     @OneToMany(mappedBy = "fromPokemon", fetch = FetchType.LAZY)
     val evolutions: List<PokemonEvolutionEntity> = mutableListOf(),
-
     @OneToMany(mappedBy = "toPokemon", fetch = FetchType.LAZY)
     val previousEvolutions: List<PokemonEvolutionEntity> = mutableListOf(),
-
     @Column(nullable = false)
     val image: String,
 ) {
@@ -90,19 +74,21 @@ class PokemonEntity (
             weight = weight,
             abilities = abilities,
             image = image,
-            evolutions = evolutions.map { evo ->
-                EvolutionDto(
-                    id = evo.toPokemon.id,
-                    name = evo.toPokemon.name,
-                    trigger = evo.trigger
-                )
-            },
-            previousEvolutions = previousEvolutions.map { evo ->
-                EvolutionDto(
-                    id = evo.fromPokemon.id,
-                    name = evo.fromPokemon.name,
-                    trigger = evo.trigger
-                )
-            }
+            evolutions =
+                evolutions.map { evo ->
+                    EvolutionDto(
+                        id = evo.toPokemon.id,
+                        name = evo.toPokemon.name,
+                        trigger = evo.trigger,
+                    )
+                },
+            previousEvolutions =
+                previousEvolutions.map { evo ->
+                    EvolutionDto(
+                        id = evo.fromPokemon.id,
+                        name = evo.fromPokemon.name,
+                        trigger = evo.trigger,
+                    )
+                },
         )
 }
