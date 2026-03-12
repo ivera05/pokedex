@@ -1,12 +1,12 @@
 "use client";
 
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {AnimatePresence} from "framer-motion";
 import {Pokemon, PokemonPageResponse,} from "@/app/lib/types";
 import Image from "next/image";
 import {apiGetPokemonList} from "@/app/lib/api";
 import {PokemonModal} from "@/app/components/pokemonModal";
-import {TYPE_COLORS} from "@/app/lib/pokemonTypes";
+import {POKEMON_TYPES, TYPE_COLORS} from "@/app/lib/pokemonTypes";
 
 function PokemonCard({pokemon}: { pokemon: Pokemon }) {
     return (
@@ -56,8 +56,20 @@ export default function PokedexPage() {
     const [error, setError] = useState<string | null>(null);
     const [page, setPage] = useState(0);
     const [selectedPokemon, setSelectedPokemon] = useState<Pokemon | null>(null);
+    const [searchInput, setSearchInput] = useState("");
+    const [searchTerm, setSearchTerm] = useState("");
+    const [selectedType, setSelectedType] = useState("all");
 
     const pageSize = 30;
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            setSearchTerm(searchInput.trim());
+            setPage(0);
+        }, 1200);
+
+        return () => clearTimeout(timeout);
+    }, [searchInput]);
 
     useEffect(() => {
         async function load() {
@@ -65,7 +77,7 @@ export default function PokedexPage() {
             setError(null);
 
             try {
-                const res = await apiGetPokemonList(pageSize, page);
+                const res = await apiGetPokemonList(searchTerm, selectedType, pageSize, page);
                 setData(res);
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
             } catch (e) {
@@ -76,7 +88,36 @@ export default function PokedexPage() {
         }
 
         load();
-    }, [page]);
+    }, [page, selectedType, searchTerm]);
+
+    const availableTypes = useMemo(() => {
+        return Array.from(POKEMON_TYPES).sort((a, b) => a.localeCompare(b));
+    }, []);
+
+    const filteredPokemon = useMemo(() => {
+        if (!data) {
+            return [];
+        }
+
+        const normalizedSearch = searchTerm.trim().toLowerCase();
+
+        return data.content.filter((pokemon) => {
+            const matchesSearch =
+                normalizedSearch.length === 0 ||
+                pokemon.name.toLowerCase().includes(normalizedSearch) ||
+                pokemon.species.toLowerCase().includes(normalizedSearch);
+
+            const matchesType =
+                selectedType === "all" || pokemon.types.includes(selectedType);
+
+            return matchesSearch && matchesType;
+        });
+    }, [data, searchTerm, selectedType]);
+
+    function clearFilters() {
+        setSearchTerm("");
+        setSelectedType("all");
+    }
 
     return (
         <div className="space-y-6">
@@ -98,6 +139,44 @@ export default function PokedexPage() {
                         ) : null}
                     </div>
                 </div>
+
+                <div className="mt-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                    <div className="flex flex-1 flex-col gap-3 md:flex-row md:items-center">
+                        <input
+                            type="text"
+                            value={searchInput}
+                            onChange={(event) => setSearchInput(event.target.value)}
+                            placeholder="Search Pokémon"
+                            className="w-full rounded-xl border border-zinc-200 px-4 py-2 text-sm outline-none transition focus:border-purple-400 focus:ring-2 focus:ring-purple-100 md:max-w-sm"
+                        />
+
+                        <select
+                            value={selectedType}
+                            onChange={(event) => setSelectedType(event.target.value)}
+                            className="rounded-xl border border-zinc-200 px-4 py-2 text-sm outline-none transition focus:border-purple-400 focus:ring-2 focus:ring-purple-100"
+                        >
+                            <option value="all">All types</option>
+                            {availableTypes.map((type) => (
+                                <option key={type} value={type}>
+                                    {type}
+                                </option>
+                            ))}
+                        </select>
+
+                        <button
+                            type="button"
+                            onClick={clearFilters}
+                            className="rounded-xl border border-zinc-200 px-4 py-2 text-sm font-medium cursor-pointer transition hover:bg-zinc-50"
+                        >
+                            Clear
+                        </button>
+                    </div>
+
+                    <div className="text-sm text-zinc-600">
+                        Showing <span className="font-semibold">{filteredPokemon.length}</span>
+                        {data ? ` of ${data.totalElements} on this page` : ""}
+                    </div>
+                </div>
             </header>
 
             {error ? (
@@ -114,13 +193,20 @@ export default function PokedexPage() {
                             className="h-32 rounded-2xl bg-zinc-50 ring-1 ring-zinc-100"
                         />
                     ))
-                ) : (
-                    data?.content.map((pokemon) => (
-                        <div key={pokemon.id} onClick={() => setSelectedPokemon(pokemon)}
-                             className="cursor-pointer transition-transform hover:scale-[1.02]">
-                            <PokemonCard key={pokemon.id} pokemon={pokemon}/>
+                ) : filteredPokemon.length > 0 ? (
+                    filteredPokemon.map((pokemon) => (
+                        <div
+                            key={pokemon.id}
+                            onClick={() => setSelectedPokemon(pokemon)}
+                            className="cursor-pointer transition-transform hover:scale-[1.02]"
+                        >
+                            <PokemonCard pokemon={pokemon}/>
                         </div>
                     ))
+                ) : (
+                    <div className="col-span-full rounded-2xl border border-zinc-200 bg-white p-6 text-sm text-zinc-600 shadow-sm">
+                        No Pokémon match the current filters.
+                    </div>
                 )}
             </section>
 
@@ -142,7 +228,7 @@ export default function PokedexPage() {
 
                     <div className="flex gap-2">
                         <button
-                            className="rounded-xl border border-zinc-200 px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50"
+                            className="rounded-xl border border-zinc-200 px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
                             disabled={data.page === 0}
                             onClick={() => setPage((prev) => Math.max(prev - 1, 0))}
                         >
@@ -150,7 +236,7 @@ export default function PokedexPage() {
                         </button>
 
                         <button
-                            className="rounded-xl bg-purple-600 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
+                            className="rounded-xl bg-purple-600 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
                             disabled={data.page + 1 >= data.totalPages}
                             onClick={() => setPage((prev) => prev + 1)}
                         >

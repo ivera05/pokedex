@@ -19,7 +19,7 @@ async function http<T>(path: string, init?: RequestInit): Promise<T> {
         ...init,
         headers: {
             "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            ...(token ? {Authorization: `Bearer ${token}`} : {}),
             ...(init?.headers || {}),
         },
     });
@@ -70,10 +70,16 @@ export async function apiGetTrainerPokemons(
 }
 
 export async function apiGetPokemonList(
+    name: string | null = null,
+    type: string | null = null,
     size: number = 30,
     page: number = 0
 ): Promise<PokemonPageResponse> {
     const params = new URLSearchParams();
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    type?.length && type !== 'all' && params.set("type", type);
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    name?.length && params.set("name", name);
     params.set("size", String(size));
     params.set("page", String(page));
 
