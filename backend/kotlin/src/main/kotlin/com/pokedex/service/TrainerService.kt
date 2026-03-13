@@ -8,6 +8,7 @@ import com.pokedex.repository.CaughtPokemonRepository
 import com.pokedex.repository.TrainerRepository
 import com.pokedex.utils.toPageResponse
 import jakarta.transaction.Transactional
+import org.springframework.data.crossstore.ChangeSetPersister
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
@@ -22,7 +23,9 @@ class TrainerService(
         user: UserEntity,
     ): TrainerEntity = trainerRepository.save(TrainerEntity(user = user, title = title))
 
-    fun findByUserId(userId: Long): TrainerEntity? = trainerRepository.findByUserId(userId)
+    fun findByUserId(userId: Long): TrainerEntity =
+        trainerRepository.findByUserId(userId)
+            ?: throw ChangeSetPersister.NotFoundException()
 
     @Transactional
     fun catchPokemon(
@@ -38,6 +41,6 @@ class TrainerService(
     ): PageResponseDto<PokemonDto> =
         caughtPokemonRepository
             .findCaughtPokemons(trainerId, pageable)
-            .map { it.toDto() }
+            .map { PokemonDto.fromEntity(it) }
             .toPageResponse()
 }

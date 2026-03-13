@@ -1,4 +1,4 @@
-import {LoginInput, LoginResponse, PokemonPageResponse, Trainer} from "@/app/lib/types";
+import {League, LoginInput, LoginResponse, PokemonPageResponse, Trainer} from "@/app/lib/types";
 import {clearCookie, getCookie} from "@/app/lib/cookies";
 
 const API_BASE =
@@ -87,3 +87,11 @@ export async function apiGetPokemonList(
         method: "GET",
     });
 }
+
+// Leagues
+export async function apiGetLeagues(): Promise<League[]> {
+    return await http<League[]>("/league/", {
+        method: "GET",
+    });
+}
+

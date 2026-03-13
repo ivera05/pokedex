@@ -1,7 +1,5 @@
 package com.pokedex.entity
 
-import com.pokedex.dto.EvolutionDto
-import com.pokedex.dto.PokemonDto
 import jakarta.persistence.CollectionTable
 import jakarta.persistence.Column
 import jakarta.persistence.ElementCollection
@@ -56,39 +54,4 @@ class PokemonEntity(
     val previousEvolutions: List<PokemonEvolutionEntity> = mutableListOf(),
     @Column(nullable = false)
     val image: String,
-) {
-    fun toDto(): PokemonDto =
-        PokemonDto(
-            id = id,
-            name = name,
-            types = types,
-            baseHP = baseHP,
-            baseAttack = baseAttack,
-            baseDefense = baseDefense,
-            baseSpecialAttack = baseSpecialAttack,
-            baseSpecialDefense = baseSpecialDefense,
-            baseSpeed = baseSpeed,
-            description = description,
-            species = species,
-            height = height,
-            weight = weight,
-            abilities = abilities,
-            image = image,
-            evolutions =
-                evolutions.map { evo ->
-                    EvolutionDto(
-                        id = evo.toPokemon.id,
-                        name = evo.toPokemon.name,
-                        trigger = evo.trigger,
-                    )
-                },
-            previousEvolutions =
-                previousEvolutions.map { evo ->
-                    EvolutionDto(
-                        id = evo.fromPokemon.id,
-                        name = evo.fromPokemon.name,
-                        trigger = evo.trigger,
-                    )
-                },
-        )
-}
+)

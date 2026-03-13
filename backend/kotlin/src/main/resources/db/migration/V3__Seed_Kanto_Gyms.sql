@@ -1,8 +1,10 @@
+-- Seed Gyms for Indigo League
+-- Add users
 INSERT INTO users (username, password, name, avatar)
 SELECT 'brock@pokemail.com',
        '$2a$10$auRfXTQP1QDyKVcUdPLahO0rb/wJj7CKcTCs6ZtqhQMXMKvFWSoQO',
        'Brock',
-       '/images/avatars/avatar-default.svg'
+       '/images/avatars/Brock.png'
 WHERE NOT EXISTS (SELECT 1
                   FROM users
                   WHERE username = 'brock@pokemail.com');
@@ -11,7 +13,7 @@ INSERT INTO users (username, password, name, avatar)
 SELECT 'misty@pokemail.com',
        '$2a$10$auRfXTQP1QDyKVcUdPLahO0rb/wJj7CKcTCs6ZtqhQMXMKvFWSoQO',
        'Misty',
-       '/images/avatars/avatar-default.svg'
+       '/images/avatars/Misty.png'
 WHERE NOT EXISTS (SELECT 1
                   FROM users
                   WHERE username = 'misty@pokemail.com');
@@ -20,7 +22,7 @@ INSERT INTO users (username, password, name, avatar)
 SELECT 'lt.surge@pokemail.com',
        '$2a$10$auRfXTQP1QDyKVcUdPLahO0rb/wJj7CKcTCs6ZtqhQMXMKvFWSoQO',
        'Lt. Surge',
-       '/images/avatars/avatar-default.svg'
+       '/images/avatars/Lt_Surge.png'
 WHERE NOT EXISTS (SELECT 1
                   FROM users
                   WHERE username = 'lt.surge@pokemail.com');
@@ -29,7 +31,7 @@ INSERT INTO users (username, password, name, avatar)
 SELECT 'erika@pokemail.com',
        '$2a$10$auRfXTQP1QDyKVcUdPLahO0rb/wJj7CKcTCs6ZtqhQMXMKvFWSoQO',
        'Erika',
-       '/images/avatars/avatar-default.svg'
+       '/images/avatars/Erika.png'
 WHERE NOT EXISTS (SELECT 1
                   FROM users
                   WHERE username = 'erika@pokemail.com');
@@ -38,7 +40,7 @@ INSERT INTO users (username, password, name, avatar)
 SELECT 'koga@pokemail.com',
        '$2a$10$auRfXTQP1QDyKVcUdPLahO0rb/wJj7CKcTCs6ZtqhQMXMKvFWSoQO',
        'Koga',
-       '/images/avatars/avatar-default.svg'
+       '/images/avatars/Koga.png'
 WHERE NOT EXISTS (SELECT 1
                   FROM users
                   WHERE username = 'koga@pokemail.com');
@@ -47,7 +49,7 @@ INSERT INTO users (username, password, name, avatar)
 SELECT 'sabrina@pokemail.com',
        '$2a$10$auRfXTQP1QDyKVcUdPLahO0rb/wJj7CKcTCs6ZtqhQMXMKvFWSoQO',
        'Sabrina',
-       '/images/avatars/avatar-default.svg'
+       '/images/avatars/Sabrina.png'
 WHERE NOT EXISTS (SELECT 1
                   FROM users
                   WHERE username = 'sabrina@pokemail.com');
@@ -56,7 +58,7 @@ INSERT INTO users (username, password, name, avatar)
 SELECT 'blaine@pokemail.com',
        '$2a$10$auRfXTQP1QDyKVcUdPLahO0rb/wJj7CKcTCs6ZtqhQMXMKvFWSoQO',
        'Blaine',
-       '/images/avatars/avatar-default.svg'
+       '/images/avatars/Blaine.png'
 WHERE NOT EXISTS (SELECT 1
                   FROM users
                   WHERE username = 'blaine@pokemail.com');
@@ -65,7 +67,7 @@ INSERT INTO users (username, password, name, avatar)
 SELECT 'giovanni@pokemail.com',
        '$2a$10$auRfXTQP1QDyKVcUdPLahO0rb/wJj7CKcTCs6ZtqhQMXMKvFWSoQO',
        'Giovanni',
-       '/images/avatars/avatar-default.svg'
+       '/images/avatars/Giovanni.png'
 WHERE NOT EXISTS (SELECT 1
                   FROM users
                   WHERE username = 'giovanni@pokemail.com');
@@ -144,67 +146,28 @@ WHERE u.username = 'giovanni@pokemail.com'
                     AND ur.role = 'TRAINER');
 
 -- Trainers
-INSERT INTO trainers (user_id, title, region)
-SELECT u.id, 'Gym Leader', 'Kanto'
+WITH trainer_data (email, bio_text) AS (VALUES ('brock@pokemail.com',
+                                                'The Rock-Solid Pokémon Trainer! My determination is as hard as a diamond.'),
+                                               ('misty@pokemail.com',
+                                                'The Tomboyish Mermaid! I specialize in Water-type Pokémon. Don''t get soaked!'),
+                                               ('lt.surge@pokemail.com',
+                                                'The Lightning American! Ten-hut! My Electric Pokémon will zap you into submission!'),
+                                               ('erika@pokemail.com',
+                                                'The Nature-Loving Princess. My Grass-type Pokémon thrive in the beautiful Celadon City sun.'),
+                                               ('koga@pokemail.com',
+                                                'The Poisonous Ninja Master. You shall succumb to my techniques and toxic Pokémon!'),
+                                               ('sabrina@pokemail.com',
+                                                'The Master of Psychic Pokémon. I had a vision of your defeat before you even walked in.'),
+                                               ('blaine@pokemail.com',
+                                                'The Hot-Headed Quiz Master! My Fire-type Pokémon are burning with passion!'),
+                                               ('giovanni@pokemail.com',
+                                                'The Greatest Trainer. Ground-type Pokémon are my specialty, and power is my goal.'))
+INSERT
+INTO trainers (user_id, title, region, bio)
+SELECT u.id, 'Gym Leader', 'Kanto', td.bio_text
 FROM users u
-WHERE u.username = 'brock@pokemail.com'
-  AND NOT EXISTS (SELECT 1
-                  FROM trainers t
-                  WHERE t.user_id = u.id);
-
-INSERT INTO trainers (user_id, title, region)
-SELECT u.id, 'Gym Leader', 'Kanto'
-FROM users u
-WHERE u.username = 'misty@pokemail.com'
-  AND NOT EXISTS (SELECT 1
-                  FROM trainers t
-                  WHERE t.user_id = u.id);
-
-INSERT INTO trainers (user_id, title, region)
-SELECT u.id, 'Gym Leader', 'Kanto'
-FROM users u
-WHERE u.username = 'lt.surge@pokemail.com'
-  AND NOT EXISTS (SELECT 1
-                  FROM trainers t
-                  WHERE t.user_id = u.id);
-
-INSERT INTO trainers (user_id, title, region)
-SELECT u.id, 'Gym Leader', 'Kanto'
-FROM users u
-WHERE u.username = 'erika@pokemail.com'
-  AND NOT EXISTS (SELECT 1
-                  FROM trainers t
-                  WHERE t.user_id = u.id);
-
-INSERT INTO trainers (user_id, title, region)
-SELECT u.id, 'Gym Leader', 'Kanto'
-FROM users u
-WHERE u.username = 'koga@pokemail.com'
-  AND NOT EXISTS (SELECT 1
-                  FROM trainers t
-                  WHERE t.user_id = u.id);
-
-INSERT INTO trainers (user_id, title, region)
-SELECT u.id, 'Gym Leader', 'Kanto'
-FROM users u
-WHERE u.username = 'sabrina@pokemail.com'
-  AND NOT EXISTS (SELECT 1
-                  FROM trainers t
-                  WHERE t.user_id = u.id);
-
-INSERT INTO trainers (user_id, title, region)
-SELECT u.id, 'Gym Leader', 'Kanto'
-FROM users u
-WHERE u.username = 'blaine@pokemail.com'
-  AND NOT EXISTS (SELECT 1
-                  FROM trainers t
-                  WHERE t.user_id = u.id);
-
-INSERT INTO trainers (user_id, title, region)
-SELECT u.id, 'Gym Leader', 'Kanto'
-FROM users u
-WHERE u.username = 'giovanni@pokemail.com'
-  AND NOT EXISTS (SELECT 1
+     JOIN trainer_data td ON u.username = td.email
+WHERE NOT EXISTS (SELECT 1
                   FROM trainers t
                   WHERE t.user_id = u.id);
 

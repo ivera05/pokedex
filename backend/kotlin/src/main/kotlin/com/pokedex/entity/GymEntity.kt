@@ -17,8 +17,8 @@ class GymEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "trainer_id")
-    val leader: TrainerEntity? = null,
+    @JoinColumn(name = "trainer_id", nullable = false, unique = true)
+    val leader: TrainerEntity,
     @Column(nullable = false)
     val league: String,
     @Column(nullable = false)

@@ -1,11 +1,10 @@
 "use client";
 
-import {useEffect, useMemo, useState} from "react";
+import {useEffect, useState} from "react";
 import {AnimatePresence} from "framer-motion";
 import {Pokemon, PokemonPageResponse,} from "@/app/lib/types";
-import {apiGetPokemonList} from "@/app/lib/api";
+import {apiGetTrainerPokemons} from "@/app/lib/api";
 import {PokemonModal} from "@/app/components/pokemonModal";
-import {POKEMON_TYPES } from "@/app/lib/pokemonTypes";
 import PokemonCard from "@/app/components/pokemonCard";
 
 export default function PokedexPage() {
@@ -14,20 +13,8 @@ export default function PokedexPage() {
     const [error, setError] = useState<string | null>(null);
     const [page, setPage] = useState(0);
     const [selectedPokemon, setSelectedPokemon] = useState<Pokemon | null>(null);
-    const [searchInput, setSearchInput] = useState("");
-    const [searchTerm, setSearchTerm] = useState("");
-    const [selectedType, setSelectedType] = useState("all");
 
     const pageSize = 30;
-
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            setSearchTerm(searchInput.trim());
-            setPage(0);
-        }, 1200);
-
-        return () => clearTimeout(timeout);
-    }, [searchInput]);
 
     useEffect(() => {
         async function load() {
@@ -35,7 +22,7 @@ export default function PokedexPage() {
             setError(null);
 
             try {
-                const res = await apiGetPokemonList(searchTerm, selectedType, pageSize, page);
+                const res = await apiGetTrainerPokemons(pageSize, page);
                 setData(res);
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
             } catch (e) {
@@ -46,46 +33,14 @@ export default function PokedexPage() {
         }
 
         load();
-    }, [page, selectedType, searchTerm]);
-
-    const availableTypes = useMemo(() => {
-        return Array.from(POKEMON_TYPES).sort((a, b) => a.localeCompare(b));
-    }, []);
-
-    const filteredPokemon = useMemo(() => {
-        if (!data) {
-            return [];
-        }
-
-        const normalizedSearch = searchTerm.trim().toLowerCase();
-
-        return data.content.filter((pokemon) => {
-            const matchesSearch =
-                normalizedSearch.length === 0 ||
-                pokemon.name.toLowerCase().includes(normalizedSearch) ||
-                pokemon.species.toLowerCase().includes(normalizedSearch);
-
-            const matchesType =
-                selectedType === "all" || pokemon.types.includes(selectedType);
-
-            return matchesSearch && matchesType;
-        });
-    }, [data, searchTerm, selectedType]);
-
-    function clearFilters() {
-        setSearchTerm("");
-        setSelectedType("all");
-    }
+    }, [page]);
 
     return (
         <div className="space-y-6">
             <header className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
                 <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
                     <div>
-                        <h1 className="text-2xl font-semibold tracking-tight">Pokedex</h1>
-                        <p className="mt-1 text-sm text-zinc-600">
-                            Browse all known Pokémon.
-                        </p>
+                        <h1 className="text-2xl font-semibold tracking-tight">Trainer&apos; Pokemon</h1>
                     </div>
 
                     <div className="text-sm text-zinc-600">
@@ -95,44 +50,6 @@ export default function PokedexPage() {
                                 <div>Page {data.page + 1} of {data.totalPages}</div>
                             </div>
                         ) : null}
-                    </div>
-                </div>
-
-                <div className="mt-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                    <div className="flex flex-1 flex-col gap-3 md:flex-row md:items-center">
-                        <input
-                            type="text"
-                            value={searchInput}
-                            onChange={(event) => setSearchInput(event.target.value)}
-                            placeholder="Search Pokémon"
-                            className="w-full rounded-xl border border-zinc-200 px-4 py-2 text-sm outline-none transition focus:border-purple-400 focus:ring-2 focus:ring-purple-100 md:max-w-sm"
-                        />
-
-                        <select
-                            value={selectedType}
-                            onChange={(event) => setSelectedType(event.target.value)}
-                            className="rounded-xl border border-zinc-200 px-4 py-2 text-sm outline-none transition focus:border-purple-400 focus:ring-2 focus:ring-purple-100"
-                        >
-                            <option value="all">All types</option>
-                            {availableTypes.map((type) => (
-                                <option key={type} value={type}>
-                                    {type}
-                                </option>
-                            ))}
-                        </select>
-
-                        <button
-                            type="button"
-                            onClick={clearFilters}
-                            className="rounded-xl border border-zinc-200 px-4 py-2 text-sm font-medium cursor-pointer transition hover:bg-zinc-50"
-                        >
-                            Clear
-                        </button>
-                    </div>
-
-                    <div className="text-sm text-zinc-600">
-                        Showing <span className="font-semibold">{filteredPokemon.length}</span>
-                        {data ? ` of ${data.totalElements} on this page` : ""}
                     </div>
                 </div>
             </header>
@@ -151,8 +68,8 @@ export default function PokedexPage() {
                             className="h-32 rounded-2xl bg-zinc-50 ring-1 ring-zinc-100"
                         />
                     ))
-                ) : filteredPokemon.length > 0 ? (
-                    filteredPokemon.map((pokemon) => (
+                ) : data?.size?? 0 > 0 ? (
+                    data?.content.map((pokemon) => (
                         <div
                             key={pokemon.id}
                             onClick={() => setSelectedPokemon(pokemon)}
@@ -163,7 +80,7 @@ export default function PokedexPage() {
                     ))
                 ) : (
                     <div className="col-span-full rounded-2xl border border-zinc-200 bg-white p-6 text-sm text-zinc-600 shadow-sm">
-                        No Pokémon match the current filters.
+                        Trainer does not have any pokemons.
                     </div>
                 )}
             </section>

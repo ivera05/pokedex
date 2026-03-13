@@ -18,7 +18,7 @@ class PokemonService(
                 .findById(id.toLong())
                 .orElseThrow { IllegalArgumentException("Pokemon with ID $id not found") }
 
-        return pokemon.toDto()
+        return PokemonDto.fromEntity(pokemon)
     }
 
     fun getAllPokemon(
@@ -29,7 +29,7 @@ class PokemonService(
         val type = filter.type?.takeIf { it.isNotBlank() }?.lowercase()
         return pokemonRepository
             .findAllByFilters(name, type, pageable)
-            .map { it.toDto() }
+            .map { PokemonDto.fromEntity(it) }
             .toPageResponse()
     }
 
@@ -39,6 +39,6 @@ class PokemonService(
     ): PageResponseDto<PokemonDto> =
         pokemonRepository
             .findAllByType(type, pageable)
-            .map { it.toDto() }
+            .map { PokemonDto.fromEntity(it) }
             .toPageResponse()
 }

@@ -25,7 +25,7 @@ This project emphasizes:
 - **Dashboard-based navigation**
 - **Pokédex browsing interface**
 - **Caught Pokémon view**
-- **Trainer stats section**
+- **Leagues and Gym section**
 - **Responsive UI styling**
 - **App Router structure with Next.js**
 

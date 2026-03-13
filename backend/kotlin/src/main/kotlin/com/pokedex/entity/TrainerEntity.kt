@@ -1,6 +1,5 @@
 package com.pokedex.entity
 
-import com.pokedex.dto.TrainerDto
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -27,6 +26,8 @@ class TrainerEntity(
     @Column(nullable = false)
     val title: String = "",
     @Column(nullable = false)
+    val bio: String = "",
+    @Column(nullable = false)
     val region: String = "",
     @OneToMany(mappedBy = "trainer", cascade = [CascadeType.PERSIST], fetch = FetchType.LAZY)
     val caughtPokemons: List<CaughtPokemonEntity> = mutableListOf(),
@@ -37,15 +38,4 @@ class TrainerEntity(
         inverseJoinColumns = [JoinColumn(name = "gym_id")],
     )
     val wonBadges: List<GymEntity> = mutableListOf(),
-) {
-    fun toDto(): TrainerDto =
-        TrainerDto(
-            id = id,
-            email = user.username,
-            displayName = user.name,
-            title = title,
-            region = region,
-            badges = wonBadges.count(),
-            avatar = user.avatar,
-        )
-}
+)

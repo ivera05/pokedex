@@ -23,12 +23,19 @@ import org.springframework.web.bind.annotation.RestController
 class TrainerController(
     private val trainerService: TrainerService,
 ) {
-    @GetMapping("/")
-    @Operation(summary = "Get Trainer Information", description = "Retrieve information about the authenticated trainer.")
-    fun getTrainerInfo(): ResponseEntity<TrainerDto> {
+    private fun getAuthenticatedUserId(): Long {
         val user = SecurityContextHolder.getContext().authentication?.principal as UserEntity
-        val trainer = trainerService.findByUserId(user.id)
-        return ResponseEntity.ok(trainer?.toDto())
+        return user.id
+    }
+
+    @GetMapping("/")
+    @Operation(
+        summary = "Get Trainer Information",
+        description = "Retrieve information about the authenticated trainer.",
+    )
+    fun getTrainerInfo(): ResponseEntity<TrainerDto> {
+        val trainer = trainerService.findByUserId(getAuthenticatedUserId())
+        return ResponseEntity.ok(TrainerDto.fromEntity(trainer))
     }
 
     @PostMapping("/catch/{pokemonId}")
@@ -36,8 +43,7 @@ class TrainerController(
     fun catchPokemon(
         @PathVariable pokemonId: Long,
     ): ResponseEntity<String> {
-        val user = SecurityContextHolder.getContext().authentication?.principal as UserEntity
-        trainerService.catchPokemon(user.id, pokemonId)
+        trainerService.catchPokemon(getAuthenticatedUserId(), pokemonId)
         return ResponseEntity.ok("Pokemon caught successfully")
     }
 
@@ -46,8 +52,7 @@ class TrainerController(
     fun getCaughtPokemons(
         @PageableDefault(size = 20) pageable: Pageable,
     ): ResponseEntity<PageResponseDto<PokemonDto>> {
-        val user = SecurityContextHolder.getContext().authentication?.principal as UserEntity
-        val caughtPokemons = trainerService.getCaughtPokemons(user.id, pageable)
+        val caughtPokemons = trainerService.getCaughtPokemons(getAuthenticatedUserId(), pageable)
         return ResponseEntity.ok(caughtPokemons)
     }
 }

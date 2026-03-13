@@ -4,7 +4,9 @@ import {useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
 import {apiGetTrainer, apiGetTrainerPokemons} from "@/app/lib/api";
 import {Pokemon, Trainer} from "@/app/lib/types";
-import PokemonCard from "@/app/components/PokemonCard";
+import PokemonCard from "@/app/components/pokemonCard";
+import Image from "next/image";
+import {getImageUrl} from "@/app/lib/utils";
 
 function Card({
                   title,
@@ -80,31 +82,19 @@ export default function DashboardPage() {
             ) : null}
 
             <section className="grid grid-cols-1 gap-4 md:grid-cols-4">
-                <Card title="Caught Pokémon" value={loading ? "…" : String(caught.length)}/>
-                <Card title="Badges" value={loading ? "…" : String(trainer?.badges ?? 0)}/>
-                <Card title="Requests (demo)" value={loading ? "…" : "—"}/>
-                <Card title="Storage (demo)" value={loading ? "…" : "—"}/>
-            </section>
-
-            <section className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-                <div className="lg:col-span-2 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <div className="text-sm font-semibold">Activity</div>
-                            <div className="text-xs text-zinc-500">
-                                Placeholder panel (swap with a chart later)
-                            </div>
-                        </div>
-                        <div className="text-xs text-zinc-500">Last 6 hours</div>
-                    </div>
-
-                    <div
-                        className="mt-5 h-48 rounded-2xl bg-linear-to-br from-purple-50 to-zinc-50 ring-1 ring-zinc-100"/>
-                </div>
-
                 <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
                     <div className="text-sm font-semibold">Trainer</div>
                     <div className="mt-4 space-y-3 text-sm">
+                        <div className="flex justify-between">
+                            <Image
+                                src={getImageUrl(trainer?.avatar ?? "")}
+                                alt={trainer?.displayName ?? "Trainer avatar"}
+                                width={48}
+                                height={48}
+                                className="rounded-full"
+                                unoptimized={process.env.NODE_ENV === 'development'}
+                            />
+                        </div>
                         <div className="flex justify-between">
                             <span className="text-zinc-500">Name</span>
                             <span className="font-medium">{trainer?.displayName ?? (loading ? "…" : "—")}</span>
@@ -115,6 +105,7 @@ export default function DashboardPage() {
                         </div>
                     </div>
                 </div>
+                <Card title="Badges" value={loading ? "…" : String(trainer?.badges ?? 0)}/>
             </section>
 
             <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
@@ -125,12 +116,6 @@ export default function DashboardPage() {
                             Showing up to {caught.length} Pokémon
                         </div>
                     </div>
-                    <button
-                        className="rounded-xl bg-purple-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-purple-700"
-                        onClick={() => alert("Hook this to your 'catch Pokémon' flow")}
-                    >
-                        + Add caught Pokémon
-                    </button>
                 </div>
 
                 <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">

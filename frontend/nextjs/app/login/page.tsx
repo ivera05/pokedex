@@ -39,7 +39,7 @@ export default function LoginPage() {
                             Trainer Login
                         </h1>
                         <p className="mt-2 text-sm text-zinc-600">
-                            Sign in to view your caught Pokémon and trainer stats.
+                            Sign in to view your caught Pokémon and other data.
                         </p>
                     </div>
 

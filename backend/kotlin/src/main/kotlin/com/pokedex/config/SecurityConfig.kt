@@ -46,6 +46,7 @@ class SecurityConfig(
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests { auth ->
                 auth.requestMatchers("/api/auth/**").permitAll()
+                auth.requestMatchers("/images/**").permitAll()
                 auth
                     .requestMatchers(
                         "/v3/api-docs",
