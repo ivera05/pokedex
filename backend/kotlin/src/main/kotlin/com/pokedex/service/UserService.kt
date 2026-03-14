@@ -53,9 +53,7 @@ class UserService(
                 avatar = avatar?.takeIf { it.isNotBlank() } ?: "/images/avatar_default.svg",
             )
         val savedUser = userRepository.save(newUser)
-
-        userRolesRepository.save(UserRoleEntity(0, role?.name ?: UserRole.TRAINER.name, savedUser))
-
+        userRolesRepository.save(UserRoleEntity(0, role ?: UserRole.TRAINER, savedUser))
         trainerService.create("Jr. Trainer", bio, city, region, savedUser)
 
         return savedUser
