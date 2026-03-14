@@ -84,7 +84,7 @@ export default function DashboardPage() {
             <section className="grid grid-cols-1 gap-4 md:grid-cols-4">
                 <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
                     <div className="text-sm font-semibold">Trainer</div>
-                    <div className="mt-4 space-y-3 text-sm">
+                    <div className="mt-4 space-y-1 text-sm">
                         <div className="flex justify-between">
                             <Image
                                 src={getImageUrl(trainer?.avatar ?? "")}
@@ -98,6 +98,10 @@ export default function DashboardPage() {
                         <div className="flex justify-between">
                             <span className="text-zinc-500">Name</span>
                             <span className="font-medium">{trainer?.displayName ?? (loading ? "…" : "—")}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-zinc-500">City</span>
+                            <span className="font-medium">{trainer?.city ?? (loading ? "…" : "—")}</span>
                         </div>
                         <div className="flex justify-between">
                             <span className="text-zinc-500">Region</span>

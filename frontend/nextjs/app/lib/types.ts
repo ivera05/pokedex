@@ -3,6 +3,7 @@ export interface Trainer {
     email: string;
     displayName: string;
     class: string;
+    city: string;
     region: string;
     bio: string;
     badges: number;
