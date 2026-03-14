@@ -1,8 +1,11 @@
 package com.pokedex.service
 
+import com.pokedex.entity.RegionEnum
 import com.pokedex.entity.UserEntity
 import com.pokedex.entity.UserRole
+import com.pokedex.entity.UserRoleEntity
 import com.pokedex.repository.UserRepository
+import com.pokedex.repository.UserRolesRepository
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -13,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class UserService(
     private val userRepository: UserRepository,
+    private val userRolesRepository: UserRolesRepository,
     private val trainerService: TrainerService,
     private val passwordEncoder: PasswordEncoder,
 ) : UserDetailsService {
@@ -33,6 +37,9 @@ class UserService(
         rawPassword: String,
         role: UserRole? = UserRole.TRAINER,
         name: String,
+        bio: String = "",
+        city: String = "",
+        region: RegionEnum = RegionEnum.UNKNOWN,
         avatar: String? = null,
     ): UserEntity {
         val encodedPassword =
@@ -42,15 +49,14 @@ class UserService(
             UserEntity(
                 username = username,
                 password = encodedPassword,
-                roles = listOfNotNull(role),
                 name = name,
                 avatar = avatar?.takeIf { it.isNotBlank() } ?: "/images/avatar_default.svg",
             )
         val savedUser = userRepository.save(newUser)
 
-        if (role == UserRole.TRAINER) {
-            trainerService.create("Jr. Trainer", savedUser)
-        }
+        userRolesRepository.save(UserRoleEntity(0, role?.name ?: UserRole.TRAINER.name, savedUser))
+
+        trainerService.create("Jr. Trainer", bio, city, region, savedUser)
 
         return savedUser
     }

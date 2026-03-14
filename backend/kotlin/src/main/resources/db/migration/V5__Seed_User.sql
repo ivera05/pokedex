@@ -20,9 +20,10 @@ WHERE username = 'sam_oak@pokemail.com'
                     AND ur.role = 'ADMIN');
 
 -- Insert trainer for the user into trainers table
-INSERT INTO trainers (user_id, title, region, bio)
+INSERT INTO trainers (user_id, title, city, region, bio)
 SELECT u.id,
        'Professor',
+       'Pallet Town',
        'Kanto',
        'The world-renowned Pokémon Professor. I have dedicated my life to studying the relationships between humans and Pokémon. It''s time to fill that Pokédex!'
 FROM users u

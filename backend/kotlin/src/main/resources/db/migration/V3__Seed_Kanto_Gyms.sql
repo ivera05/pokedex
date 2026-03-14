@@ -146,25 +146,33 @@ WHERE u.username = 'giovanni@pokemail.com'
                     AND ur.role = 'TRAINER');
 
 -- Trainers
-WITH trainer_data (email, bio_text) AS (VALUES ('brock@pokemail.com',
-                                                'The Rock-Solid Pokémon Trainer! My determination is as hard as a diamond.'),
-                                               ('misty@pokemail.com',
-                                                'The Tomboyish Mermaid! I specialize in Water-type Pokémon. Don''t get soaked!'),
-                                               ('lt.surge@pokemail.com',
-                                                'The Lightning American! Ten-hut! My Electric Pokémon will zap you into submission!'),
-                                               ('erika@pokemail.com',
-                                                'The Nature-Loving Princess. My Grass-type Pokémon thrive in the beautiful Celadon City sun.'),
-                                               ('koga@pokemail.com',
-                                                'The Poisonous Ninja Master. You shall succumb to my techniques and toxic Pokémon!'),
-                                               ('sabrina@pokemail.com',
-                                                'The Master of Psychic Pokémon. I had a vision of your defeat before you even walked in.'),
-                                               ('blaine@pokemail.com',
-                                                'The Hot-Headed Quiz Master! My Fire-type Pokémon are burning with passion!'),
-                                               ('giovanni@pokemail.com',
-                                                'The Greatest Trainer. Ground-type Pokémon are my specialty, and power is my goal.'))
+WITH trainer_data (email, bio_text, city) AS (VALUES ('brock@pokemail.com',
+                                                      'The Rock-Solid Pokémon Trainer! My determination is as hard as a diamond.',
+                                                      'Pewter City'),
+                                                     ('misty@pokemail.com',
+                                                      'The Tomboyish Mermaid! I specialize in Water-type Pokémon. Don''t get soaked!',
+                                                      'Cerulean City'),
+                                                     ('lt.surge@pokemail.com',
+                                                      'The Lightning American! Ten-hut! My Electric Pokémon will zap you into submission!',
+                                                      'Vermilion City'),
+                                                     ('erika@pokemail.com',
+                                                      'The Nature-Loving Princess. My Grass-type Pokémon thrive in the beautiful Celadon City sun.',
+                                                      'Celadon City'),
+                                                     ('koga@pokemail.com',
+                                                      'The Poisonous Ninja Master. You shall succumb to my techniques and toxic Pokémon!',
+                                                      'Fuchsia City'),
+                                                     ('sabrina@pokemail.com',
+                                                      'The Master of Psychic Pokémon. I had a vision of your defeat before you even walked in.',
+                                                      'Saffron City'),
+                                                     ('blaine@pokemail.com',
+                                                      'The Hot-Headed Quiz Master! My Fire-type Pokémon are burning with passion!',
+                                                      'Cinnabar Island'),
+                                                     ('giovanni@pokemail.com',
+                                                      'The Greatest Trainer. Ground-type Pokémon are my specialty, and power is my goal.',
+                                                      'Viridian City'))
 INSERT
-INTO trainers (user_id, title, region, bio)
-SELECT u.id, 'Gym Leader', 'Kanto', td.bio_text
+INTO trainers (user_id, title, city, region, bio)
+SELECT u.id, 'Gym Leader', td.city, 'Kanto', td.bio_text
 FROM users u
      JOIN trainer_data td ON u.username = td.email
 WHERE NOT EXISTS (SELECT 1

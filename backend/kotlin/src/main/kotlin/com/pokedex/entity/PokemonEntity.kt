@@ -1,14 +1,12 @@
 package com.pokedex.entity
 
-import jakarta.persistence.CollectionTable
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
-import jakarta.persistence.ElementCollection
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 
@@ -20,22 +18,20 @@ class PokemonEntity(
     val id: Long = 0,
     @Column(nullable = false)
     val name: String,
-    @ElementCollection
-    @CollectionTable(name = "pokemon_types", joinColumns = [JoinColumn(name = "pokemon_id")])
-    @Column(name = "type")
-    val types: List<String>,
+    @OneToMany(mappedBy = "pokemon", cascade = [CascadeType.PERSIST], orphanRemoval = true)
+    val types: MutableSet<PokemonTypeEntity> = mutableSetOf(),
     @Column(name = "base_hp", nullable = false)
-    val baseHP: Int,
+    val baseHP: Short,
     @Column(nullable = false)
-    val baseAttack: Int,
+    val baseAttack: Short,
     @Column(nullable = false)
-    val baseDefense: Int,
+    val baseDefense: Short,
     @Column(nullable = false)
-    val baseSpecialAttack: Int,
+    val baseSpecialAttack: Short,
     @Column(nullable = false)
-    val baseSpecialDefense: Int,
+    val baseSpecialDefense: Short,
     @Column(nullable = false)
-    val baseSpeed: Int,
+    val baseSpeed: Short,
     @Column(nullable = false)
     val species: String,
     @Column(columnDefinition = "TEXT")
@@ -44,14 +40,12 @@ class PokemonEntity(
     val height: Float,
     @Column(nullable = false)
     val weight: Float,
-    @ElementCollection
-    @CollectionTable(name = "pokemon_abilities", joinColumns = [JoinColumn(name = "pokemon_id")])
-    @Column(name = "ability")
-    val abilities: List<String>,
+    @OneToMany(mappedBy = "pokemon", cascade = [CascadeType.PERSIST], orphanRemoval = true)
+    val abilities: MutableSet<PokemonAbilityEntity> = mutableSetOf(),
     @OneToMany(mappedBy = "fromPokemon", fetch = FetchType.LAZY)
-    val evolutions: List<PokemonEvolutionEntity> = mutableListOf(),
+    val evolutions: MutableList<PokemonEvolutionEntity>,
     @OneToMany(mappedBy = "toPokemon", fetch = FetchType.LAZY)
-    val previousEvolutions: List<PokemonEvolutionEntity> = mutableListOf(),
+    val previousEvolutions: MutableList<PokemonEvolutionEntity>,
     @Column(nullable = false)
     val image: String,
 )

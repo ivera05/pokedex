@@ -1,27 +1,20 @@
 package com.pokedex.dto
 
 import com.pokedex.entity.GymEntity
+import com.pokedex.entity.LeagueEnum
+import com.pokedex.entity.RegionEnum
 
 data class LeagueGymsDto(
-    val league: String,
-    val region: String,
+    val league: LeagueEnum,
+    val region: RegionEnum,
     val gyms: List<GymDto>,
-) {
-    companion object {
-        fun fromEntity(gyms: List<GymEntity>): LeagueGymsDto =
-            LeagueGymsDto(
-                league = gyms.first().league,
-                region = gyms.first().region,
-                gyms = gyms.map { GymDto.fromEntity(it) },
-            )
-    }
-}
+)
 
 data class GymDto(
     val id: Long,
     val leader: TrainerDto,
-    val league: String,
-    val region: String,
+    val league: LeagueEnum,
+    val region: RegionEnum,
     val city: String,
     val badge: String,
     val image: String,

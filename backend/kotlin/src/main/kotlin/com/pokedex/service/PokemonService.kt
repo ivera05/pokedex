@@ -26,7 +26,7 @@ class PokemonService(
         pageable: Pageable,
     ): PageResponseDto<PokemonDto> {
         val name = filter.name?.takeIf { it.isNotBlank() }?.lowercase()
-        val type = filter.type?.takeIf { it.isNotBlank() }?.lowercase()
+        val type = filter.type?.takeIf { true }
         return pokemonRepository
             .findAllByFilters(name, type, pageable)
             .map { PokemonDto.fromEntity(it) }

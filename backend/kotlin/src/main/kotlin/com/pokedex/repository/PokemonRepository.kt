@@ -1,6 +1,7 @@
 package com.pokedex.repository
 
 import com.pokedex.entity.PokemonEntity
+import com.pokedex.entity.PokemonTypeEnum
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
@@ -25,7 +26,7 @@ interface PokemonRepository : JpaRepository<PokemonEntity, Long> {
     FROM PokemonEntity p
     LEFT JOIN p.types t
     WHERE (CAST(:name AS string) IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', CAST(:name AS string), '%')))
-      AND (CAST(:type AS string) IS NULL OR LOWER(t) = LOWER(CAST(:type AS string)))
+      AND (CAST(:type AS string) IS NULL OR t = :type)
     ORDER BY p.id
     """,
         countQuery = """
@@ -33,12 +34,12 @@ interface PokemonRepository : JpaRepository<PokemonEntity, Long> {
     FROM PokemonEntity p
     LEFT JOIN p.types t
     WHERE (CAST(:name AS string) IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', CAST(:name AS string), '%')))
-      AND (CAST(:type AS string) IS NULL OR LOWER(t) = LOWER(CAST(:type AS string)))
+      AND (CAST(:type AS string) IS NULL OR t = :type)
     """,
     )
     fun findAllByFilters(
         @Param("name") name: String?,
-        @Param("type") type: String?,
+        @Param("type") type: PokemonTypeEnum?,
         pageable: Pageable,
     ): Page<PokemonEntity>
 }

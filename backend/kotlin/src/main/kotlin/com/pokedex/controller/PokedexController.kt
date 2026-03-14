@@ -3,6 +3,7 @@ package com.pokedex.controller
 import com.pokedex.dto.PageResponseDto
 import com.pokedex.dto.PokemonDto
 import com.pokedex.dto.PokemonFilter
+import com.pokedex.entity.PokemonTypeEnum
 import com.pokedex.service.PokemonService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -28,7 +29,7 @@ class PokedexController(
     )
     fun getPokemonList(
         @RequestParam(required = false) name: String?,
-        @RequestParam(required = false) type: String?,
+        @RequestParam(required = false) type: PokemonTypeEnum?,
         @PageableDefault(size = 20) pageable: Pageable,
     ): ResponseEntity<PageResponseDto<PokemonDto>> {
         val filter =
@@ -40,13 +41,19 @@ class PokedexController(
     }
 
     @GetMapping("/{pokemonId}")
-    @Operation(summary = "Get a specific Pokemon by ID", description = "Retrieve information about a specific Pokemon by its ID.")
+    @Operation(
+        summary = "Get a specific Pokemon by ID",
+        description = "Retrieve information about a specific Pokemon by its ID.",
+    )
     fun getPokemonById(
         @PathVariable pokemonId: Int,
     ): PokemonDto? = pokemonService.getPokemonById(pokemonId)
 
     @GetMapping("/type/{type}")
-    @Operation(summary = "Get paginated Pokemon by Type", description = "Retrieve a paginated list of Pokemon of a specific type.")
+    @Operation(
+        summary = "Get paginated Pokemon by Type",
+        description = "Retrieve a paginated list of Pokemon of a specific type.",
+    )
     fun getPokemonByType(
         @PathVariable type: String,
         @PageableDefault(size = 20) pageable: Pageable,

@@ -39,6 +39,9 @@ class AuthController(
             request.password,
             request.role,
             request.name,
+            request.bio,
+            request.city,
+            request.region,
             request.avatar,
         )
         return "User registered successfully!"

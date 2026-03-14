@@ -28,25 +28,33 @@ WHERE username IN
   AND NOT EXISTS (SELECT 1 FROM user_roles ur WHERE ur.user_id = users.id);
 
 -- 3. Create Trainer Profiles
-WITH trainer_data (email, bio_text) AS (VALUES ('falkner@pokemail.com',
-                                                'The Elegant Exterminator! I’m carrying on my father’s legacy with the finest Flying-type Pokémon.'),
-                                               ('bugsy@pokemail.com',
-                                                'The Walking Bug Encyclopedia! My research into Bug-type Pokémon has made me a master of the hive.'),
-                                               ('whitney@pokemail.com',
-                                                'The Incredibly Pretty Girl! Don''t let my Normal-type Pokémon fool you—they''re tougher than they look!'),
-                                               ('morty@pokemail.com',
-                                                'The Mystic Seer of the Future. I have spent my life training in Ecruteak to see what others cannot.'),
-                                               ('chuck@pokemail.com',
-                                                'His Roar Banishis Evil! I spend 24 hours a day training alongside my Fighting-type Pokémon.'),
-                                               ('jasmine@pokemail.com',
-                                                'The Steel-Clad Defense Girl. My Pokémon have a heart of iron and a will that cannot be broken.'),
-                                               ('pryce@pokemail.com',
-                                                'The Teacher of Winter''s Harshness. I have lived with Pokémon for many years, and I know the cold truth of battle.'),
-                                               ('clair@pokemail.com',
-                                                'The Blessed User of Dragons! I hold the lineage of the world''s greatest Dragon-type masters.'))
+WITH trainer_data (email, bio_text, city) AS (VALUES ('falkner@pokemail.com',
+                                                      'The Elegant Exterminator! I’m carrying on my father’s legacy with the finest Flying-type Pokémon.',
+                                                      'Violet City'),
+                                                     ('bugsy@pokemail.com',
+                                                      'The Walking Bug Encyclopedia! My research into Bug-type Pokémon has made me a master of the hive.',
+                                                      'Azalea Town'),
+                                                     ('whitney@pokemail.com',
+                                                      'The Incredibly Pretty Girl! Don''t let my Normal-type Pokémon fool you—they''re tougher than they look!',
+                                                      'Goldenrod City'),
+                                                     ('morty@pokemail.com',
+                                                      'The Mystic Seer of the Future. I have spent my life training in Ecruteak to see what others cannot.',
+                                                      'Ecruteak City'),
+                                                     ('chuck@pokemail.com',
+                                                      'His Roar Banishis Evil! I spend 24 hours a day training alongside my Fighting-type Pokémon.',
+                                                      'Cianwood City'),
+                                                     ('jasmine@pokemail.com',
+                                                      'The Steel-Clad Defense Girl. My Pokémon have a heart of iron and a will that cannot be broken.',
+                                                      'Olivine City'),
+                                                     ('pryce@pokemail.com',
+                                                      'The Teacher of Winter''s Harshness. I have lived with Pokémon for many years, and I know the cold truth of battle.',
+                                                      'Mahogany Town'),
+                                                     ('clair@pokemail.com',
+                                                      'The Blessed User of Dragons! I hold the lineage of the world''s greatest Dragon-type masters.',
+                                                      'Blackthorn City'))
 INSERT
-INTO trainers (user_id, title, region, bio)
-SELECT u.id, 'Gym Leader', 'Johto', td.bio_text
+INTO trainers (user_id, title, region, city, bio)
+SELECT u.id, 'Gym Leader', 'Johto', td.city, td.bio_text
 FROM users u
      JOIN trainer_data td ON u.username = td.email
 WHERE NOT EXISTS (SELECT 1
