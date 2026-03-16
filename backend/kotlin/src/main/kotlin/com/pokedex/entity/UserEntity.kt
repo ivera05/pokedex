@@ -3,6 +3,7 @@ package com.pokedex.entity
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
@@ -27,7 +28,7 @@ class UserEntity(
     val name: String = "",
     @Column(nullable = false)
     val avatar: String = "",
-    @OneToMany(mappedBy = "user", cascade = [CascadeType.PERSIST], orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = [CascadeType.PERSIST], orphanRemoval = true, fetch = FetchType.EAGER)
     val roles: MutableSet<UserRoleEntity> = mutableSetOf(),
 ) : UserDetails {
     override fun getUsername(): String = username

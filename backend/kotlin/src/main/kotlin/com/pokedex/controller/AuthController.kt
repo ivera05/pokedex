@@ -63,7 +63,14 @@ class AuthController(
             passwordEncoder.matches(request.password, user.password),
         )
 
-        val token = jwtService.generateToken(user.id, request.username, user.name, user.tokenVersion)
+        val token =
+            jwtService.generateToken(
+                user.id,
+                request.username,
+                user.name,
+                user.roles.map { "ROLE_${it.role.name}" },
+                user.tokenVersion,
+            )
         return AuthResponse(token)
     }
 

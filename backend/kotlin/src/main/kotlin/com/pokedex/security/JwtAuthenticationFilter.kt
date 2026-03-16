@@ -22,10 +22,10 @@ class JwtAuthenticationFilter(
     ) {
         val token = getTokenFromRequest(request)
         if (!token.isNullOrEmpty() && jwtService.validateToken(token)) {
-            val username = jwtService.extractUsername(token)
+            val uid = jwtService.extractUserId(token)
             val tokenVersion = jwtService.extractTokenVersion(token)
 
-            val user = userService.findByUsername(username)
+            val user = userService.findByUserId(uid)
 
             if (user.tokenVersion == tokenVersion) {
                 val authentication =
@@ -34,6 +34,7 @@ class JwtAuthenticationFilter(
                         null,
                         user.authorities,
                     )
+
                 authentication.details = WebAuthenticationDetailsSource().buildDetails(request)
                 SecurityContextHolder.getContext().authentication = authentication
             }
