@@ -4,12 +4,14 @@ import com.pokedex.dto.GymDto
 import com.pokedex.dto.LeagueGymsDto
 import com.pokedex.dto.TrainerDto
 import com.pokedex.repository.GymRepository
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 
 @Service
 class GymService(
     private val gymRepository: GymRepository,
 ) {
+    @Cacheable(value = ["gym"])
     fun getAllGyms(): List<LeagueGymsDto> {
         val allGyms = gymRepository.findAll()
         val gymsByLeague = allGyms.groupBy { it.league }
@@ -23,6 +25,7 @@ class GymService(
         }
     }
 
+    @Cacheable(value = ["gym"], key = "#region")
     fun getGymsByRegion(region: String): LeagueGymsDto {
         val gymEntityList = gymRepository.findAllByRegion(region)
 

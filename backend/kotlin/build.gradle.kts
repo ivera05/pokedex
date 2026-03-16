@@ -45,6 +45,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-flyway")
     implementation("org.springframework.boot:spring-boot-starter-logging")
+    implementation("org.springframework.boot:spring-boot-starter-cache")
 
     // Flyway
     implementation("org.flywaydb:flyway-core")
@@ -66,7 +67,8 @@ dependencies {
     // Springdoc for OpenAPI — 3.0.1 targets Spring Boot 4
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1")
 
-    "flyway"("org.postgresql:postgresql:42.7.5")
+    // Cache
+    implementation("com.github.ben-manes.caffeine:caffeine")
 
     // Test Dependencies
     testImplementation("org.springframework.boot:spring-boot-starter-test") {

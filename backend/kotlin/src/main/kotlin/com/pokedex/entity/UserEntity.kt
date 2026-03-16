@@ -34,7 +34,7 @@ class UserEntity(
 
     override fun getPassword(): String = password
 
-    override fun getAuthorities() = roles.map { SimpleGrantedAuthority(it.role.name) }
+    override fun getAuthorities() = roles.map { SimpleGrantedAuthority("ROLE_${it.role.name}") }
 
     override fun isAccountNonExpired() = true
 

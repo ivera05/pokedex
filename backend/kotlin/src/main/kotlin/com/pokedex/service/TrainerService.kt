@@ -9,6 +9,7 @@ import com.pokedex.repository.CaughtPokemonRepository
 import com.pokedex.repository.TrainerRepository
 import com.pokedex.utils.toPageResponse
 import jakarta.transaction.Transactional
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.crossstore.ChangeSetPersister
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -38,6 +39,7 @@ class TrainerService(
             ),
         )
 
+    @Cacheable(value = ["trainer"], key = "#userId", unless = "#result == null")
     fun findByUserId(userId: Long): TrainerEntity =
         trainerRepository.findByUserId(userId)
             ?: throw ChangeSetPersister.NotFoundException()
@@ -50,6 +52,11 @@ class TrainerService(
         caughtPokemonRepository.catchPokemon(trainerId, pokemonId)
     }
 
+    @Cacheable(
+        value = ["trainer-pokemon"],
+        key = "{ #trainerId, #pageable.pageNumber, #pageable.pageSize }",
+        unless = "#result == null",
+    )
     fun getCaughtPokemons(
         trainerId: Long,
         pageable: Pageable,

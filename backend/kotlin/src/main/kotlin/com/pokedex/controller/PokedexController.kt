@@ -48,14 +48,4 @@ class PokedexController(
     fun getPokemonById(
         @PathVariable pokemonId: Int,
     ): PokemonDto? = pokemonService.getPokemonById(pokemonId)
-
-    @GetMapping("/type/{type}")
-    @Operation(
-        summary = "Get paginated Pokemon by Type",
-        description = "Retrieve a paginated list of Pokemon of a specific type.",
-    )
-    fun getPokemonByType(
-        @PathVariable type: String,
-        @PageableDefault(size = 20) pageable: Pageable,
-    ): ResponseEntity<PageResponseDto<PokemonDto>> = ResponseEntity.ok(pokemonService.getPokemonByType(type, pageable))
 }

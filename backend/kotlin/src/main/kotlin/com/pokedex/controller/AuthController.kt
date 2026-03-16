@@ -73,11 +73,23 @@ class AuthController(
         description = "Invalidate all JWTs by incrementing the user's token version.",
     )
     fun logout(): String {
-        val username =
-            SecurityContextHolder.getContext().authentication?.name
-                ?: return "Not authenticated"
+        val auth = SecurityContextHolder.getContext().authentication
 
-        userService.incrementTokenVersion(username)
-        return "User logged out successfully!"
+        // Check if the user is actually authenticated
+        if (auth == null || !auth.isAuthenticated || auth.name == "anonymousUser") {
+            logger.warn("Logout attempt failed: No authenticated user found in context.")
+            return "Error: No active session found."
+        }
+
+        val username = auth.name
+
+        return try {
+            userService.incrementTokenVersion(username)
+            logger.info("User '{}' logged out. Token version incremented.", username)
+            "User logged out successfully from all devices!"
+        } catch (e: Exception) {
+            logger.error("Failed to increment token version for user '{}'", username, e)
+            "Error: Could not process logout."
+        }
     }
 }

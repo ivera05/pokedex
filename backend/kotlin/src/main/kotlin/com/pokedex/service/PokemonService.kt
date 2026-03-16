@@ -5,6 +5,7 @@ import com.pokedex.dto.PokemonDto
 import com.pokedex.dto.PokemonFilter
 import com.pokedex.repository.PokemonRepository
 import com.pokedex.utils.toPageResponse
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service
 class PokemonService(
     private val pokemonRepository: PokemonRepository,
 ) {
+    @Cacheable(value = ["pokemon"], key = "#id")
     fun getPokemonById(id: Int): PokemonDto? {
         val pokemon =
             pokemonRepository
@@ -21,6 +23,11 @@ class PokemonService(
         return PokemonDto.fromEntity(pokemon)
     }
 
+    @Cacheable(
+        value = ["pokemon"],
+        key = "{ #filter, #pageable.pageNumber, #pageable.pageSize }",
+        unless = "#result == null",
+    )
     fun getAllPokemon(
         filter: PokemonFilter,
         pageable: Pageable,
@@ -32,13 +39,4 @@ class PokemonService(
             .map { PokemonDto.fromEntity(it) }
             .toPageResponse()
     }
-
-    fun getPokemonByType(
-        type: String,
-        pageable: Pageable,
-    ): PageResponseDto<PokemonDto> =
-        pokemonRepository
-            .findAllByType(type, pageable)
-            .map { PokemonDto.fromEntity(it) }
-            .toPageResponse()
 }
